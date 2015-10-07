@@ -50,9 +50,9 @@ function create() {
 
     for (var i = 0; i < 30; i++)
     {
-        var randomPlace = Math.random() * (800 - 1) + 1;
+        var randomPlace = Math.random() * (1000 - 1) + 1;
         var asteroid = asteroids.create(randomPlace, -1000 * i, 'asteroid');
-        var randomGravity = Math.random() * (50 - 40) + 40;
+        var randomGravity = Math.random() * (45 - 40) + 40;
         asteroid.body.gravity.y = randomGravity;
     }
 
@@ -92,23 +92,23 @@ function update() {
     if (cursors.left.isDown)
     {
         //  Move to the left
-        ship.body.velocity.x = -450;
+        ship.body.velocity.x = -650;
     }
     else if (cursors.right.isDown)
     {
         //  Move to the right
-        ship.body.velocity.x = 450;
+        ship.body.velocity.x = 650;
     }
 
     if (cursors.up.isDown)
     {
         // Move up
-        ship.body.velocity.y = -450;
+        ship.body.velocity.y = -650;
     }
     else if (cursors.down.isDown)
     {
         // Move down
-        ship.body.velocity.y = 450;
+        ship.body.velocity.y = 650;
     }
 }
 
