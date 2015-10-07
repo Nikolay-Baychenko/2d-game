@@ -21,9 +21,12 @@ function preload() {
     game.load.image('space', 'assets/space-background.jpg');
     // loading sprite of ship
     game.load.spritesheet('ship', 'assets/ship.gif', 98, 98);
+    // loading sprite of asteroid
+    game.load.image('asteroid', 'assets/asteroid.png', 50, 50);
 }
 
 var ship;
+var asteroids;
 
 function create() {
     // Adjusting physics
@@ -39,11 +42,25 @@ function create() {
     // Setting ship collision
     ship.body.collideWorldBounds = true;
 
+    // Adding asteroids group
+    asteroids = game.add.group();
+    // Adjusting physics for asteroids
+    asteroids.enableBody = true;
+    // Creating asteroid
+    var asteroid = asteroids.create(400, 10, 'asteroid');
+    // Setting gravity for asteroid
+    asteroid.body.gravity.y = 300;
+
+
+
     // Enable controls
     cursors = game.input.keyboard.createCursorKeys();
 }
 
 function update() {
+    // Overlap settings
+    game.physics.arcade.overlap(asteroids, ship, asteroidCollision, this, null);
+
     // Initial velocity of the ship
     ship.body.velocity.x = 0;
     ship.body.velocity.y = 0;
@@ -51,27 +68,29 @@ function update() {
     if (cursors.left.isDown)
     {
         //  Move to the left
-        ship.body.velocity.x = -150;
+        ship.body.velocity.x = -250;
     }
     else if (cursors.right.isDown)
     {
         //  Move to the right
-        ship.body.velocity.x = 150;
+        ship.body.velocity.x = 250;
     }
 
     if (cursors.up.isDown)
     {
         // Move up
-        ship.body.velocity.y = -150;
+        ship.body.velocity.y = -250;
     }
     else if (cursors.down.isDown)
     {
         // Move down
-        ship.body.velocity.y = 150;
+        ship.body.velocity.y = 250;
     }
+}
 
-
-
+function asteroidCollision(asteroid, ship) {
+    // Destroys the ship
+    ship.kill();
 }
 
 </script>
