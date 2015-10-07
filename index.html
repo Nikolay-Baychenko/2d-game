@@ -1,0 +1,79 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Phaser - Making your first game, part 9</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+    // loading image of background
+    game.load.image('space', 'assets/space-background.jpg');
+    // loading sprite of ship
+    game.load.spritesheet('ship', 'assets/ship.gif', 98, 98);
+}
+
+var ship;
+
+function create() {
+    // Adjusting physics
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+    // Adjusting background
+    game.add.sprite(0, 0, 'space');
+    // Adding ship
+    ship = game.add.sprite(350, game.world.height - 120, 'ship');
+    // Adjusting physics to the ship
+    game.physics.arcade.enable(ship);
+    // Setting gravity of ship to 0
+    ship.body.gravity.y = 0;
+    // Setting ship collision
+    ship.body.collideWorldBounds = true;
+
+    // Enable controls
+    cursors = game.input.keyboard.createCursorKeys();
+}
+
+function update() {
+    // Initial velocity of the ship
+    ship.body.velocity.x = 0;
+    ship.body.velocity.y = 0;
+
+    if (cursors.left.isDown)
+    {
+        //  Move to the left
+        ship.body.velocity.x = -150;
+    }
+    else if (cursors.right.isDown)
+    {
+        //  Move to the right
+        ship.body.velocity.x = 150;
+    }
+
+    if (cursors.up.isDown)
+    {
+        // Move up
+        ship.body.velocity.y = -150;
+    }
+    else if (cursors.down.isDown)
+    {
+        // Move down
+        ship.body.velocity.y = 150;
+    }
+
+
+
+}
+
+</script>
+</body>
+</html>
