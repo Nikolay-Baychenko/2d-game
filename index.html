@@ -22,7 +22,7 @@ function preload() {
     // loading sprite of ship
     game.load.spritesheet('ship', 'assets/ship.gif', 98, 98);
     // loading sprite of asteroid
-    game.load.image('asteroid', 'assets/asteroid.png', 50, 50);
+    game.load.image('asteroid', 'assets/asteroid.png');
 }
 
 var ship;
@@ -46,15 +46,30 @@ function create() {
     asteroids = game.add.group();
     // Adjusting physics for asteroids
     asteroids.enableBody = true;
-    // Creating asteroid
-    var asteroid = asteroids.create(400, 10, 'asteroid');
-    // Setting gravity for asteroid
-    asteroid.body.gravity.y = 300;
+    // Creating asteroids
 
+
+    for(var i = 0; i < 30; i++)
+    {
+        var randomTime = Math.random() * (7000 - 2000) + 2000;
+        generateAsteroid(randomTime);
+    }
+
+    function generateAsteroid(randomTime) {
+        setTimeout(function() {
+            // Setting asteroid's location
+            var randomPlace = Math.random() * (800 - 1) + 1;
+            var asteroid = asteroids.create(randomPlace, 10, 'asteroid');
+            // Setting gravity for asteroid
+            var randomGravity = Math.random() * (400 - 200) + 200;
+            asteroid.body.gravity.y = randomGravity;
+        }, randomTime);
+    }
 
 
     // Enable controls
     cursors = game.input.keyboard.createCursorKeys();
+
 }
 
 function update() {
@@ -92,6 +107,8 @@ function asteroidCollision(asteroid, ship) {
     // Destroys the ship
     ship.kill();
 }
+
+
 
 </script>
 </body>
