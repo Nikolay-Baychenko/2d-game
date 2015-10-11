@@ -1,124 +1,40 @@
-<!doctype html> 
-<html lang="en"> 
-<head> 
+<!DOCTYPE HTML>
+<html>
+<head>
 	<meta charset="UTF-8" />
-    <title>Evade asteroids!</title>
-	<script type="text/javascript" src="js/phaser.min.js"></script>
-    <style type="text/css">
-        body {
+	<title>Evade asteroids!</title>
+	<script src="lib/phaser.min.js"></script>
+	<script src="js/Boot.js"></script>
+	<script src="js/Preloader.js"></script>
+	<script src="js/MainMenu.js"></script>
+	<script src="js/Game.js"></script>
+    <style>
+		body {
             margin: 0;
+            padding: 0;
+			background-color: #fff;
         }
     </style>
+	<meta name="viewport"
+		content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
 </head>
 <body>
 
 <script type="text/javascript">
-
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-
-function preload() {
-    // loading image of background
-    game.load.image('space', 'assets/space-background.jpg');
-    // loading sprite of ship
-    game.load.spritesheet('ship', 'assets/ship.gif', 98, 98);
-    // loading sprite of asteroid
-    game.load.image('asteroid', 'assets/asteroid.png');
-}
-
-var ship;
-var asteroids;
-
-function create() {
-    // Adjusting physics
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-    // Adjusting background
-    game.add.sprite(0, 0, 'space');
-    // Adding ship
-    ship = game.add.sprite(350, game.world.height - 120, 'ship');
-    // Adjusting physics to the ship
-    game.physics.arcade.enable(ship);
-    // Setting gravity of ship to 0
-    ship.body.gravity.y = 0;
-    // Setting ship collision
-    ship.body.collideWorldBounds = true;
-
-    // Adding asteroids group
-    asteroids = game.add.group();
-    // Adjusting physics for asteroids
-    asteroids.enableBody = true;
-    // Creating asteroids
-
-    for (var i = 0; i < 30; i++)
-    {
-        var randomPlace = Math.random() * (1000 - 1) + 1;
-        var asteroid = asteroids.create(randomPlace, -1000 * i, 'asteroid');
-        var randomGravity = Math.random() * (45 - 40) + 40;
-        asteroid.body.gravity.y = randomGravity;
-    }
-
-    /*
-    for(var i = 0; i < 30; i++)
-    {
-        var randomTime = Math.random() * (7000 - 2000) + 2000;
-        generateAsteroid(randomTime);
-    }
-
-    function generateAsteroid(randomTime) {
-        setTimeout(function() {
-            // Setting asteroid's location
-            var randomPlace = Math.random() * (800 - 1) + 1;
-            var asteroid = asteroids.create(randomPlace, 10, 'asteroid');
-            // Setting gravity for asteroid
-            var randomGravity = Math.random() * (400 - 200) + 200;
-            asteroid.body.gravity.y = randomGravity;
-        }, randomTime);
-    }
-    */
-
-
-    // Enable controls
-    cursors = game.input.keyboard.createCursorKeys();
-
-}
-
-function update() {
-    // Overlap settings
-    game.physics.arcade.overlap(asteroids, ship, asteroidCollision, this, null);
-
-    // Initial velocity of the ship
-    ship.body.velocity.x = 0;
-    ship.body.velocity.y = 0;
-
-    if (cursors.left.isDown)
-    {
-        //  Move to the left
-        ship.body.velocity.x = -650;
-    }
-    else if (cursors.right.isDown)
-    {
-        //  Move to the right
-        ship.body.velocity.x = 650;
-    }
-
-    if (cursors.up.isDown)
-    {
-        // Move up
-        ship.body.velocity.y = -650;
-    }
-    else if (cursors.down.isDown)
-    {
-        // Move down
-        ship.body.velocity.y = 650;
-    }
-}
-
-function asteroidCollision(asteroid, ship) {
-    // Destroys the ship
-    ship.kill();
-}
-
-
-
+(function() {
+	//	100% of the browser window - see Boot.js for additional configuration
+	var SAFE_ZONE_WIDTH = 960;// * window.devicePixelRatio;
+	var SAFE_ZONE_HEIGHT = 640;// * window.devicePixelRatio;
+	var game = new Phaser.Game(SAFE_ZONE_WIDTH, SAFE_ZONE_HEIGHT, Phaser.AUTO, '');
+	//	Add the States your game has.
+	game.state.add('Boot', RENAME_ME.Boot);
+	game.state.add('Preloader', RENAME_ME.Preloader);
+	game.state.add('MainMenu', RENAME_ME.MainMenu);
+	game.state.add('Game', RENAME_ME.Game);
+	//	Now start the Boot state.
+	game.state.start('Boot');
+})();
 </script>
+
 </body>
 </html>
