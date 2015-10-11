@@ -1,0 +1,18 @@
+﻿(proposed) DEVELOPMENT PLAN.
+Meta:
+- code should be modular: separated into small functions, “classes” separated into different files.
+- ideally, code itself should tell you how smthing is done, rare code comments are for why smthing is done.
+
+Steps:
+
+1) The ship is constantly moving up (although we cannot see it now, 'cuz the background is fixed and the camera attached to the ship (except its rotation)).
+
+2) Upper left corner displays score.
+
+3) Add static spheres (“asteroids”) of random sizes (within certain range) and types (at the beginning “vanilla” asteroids is the dominant type). At this stage no account for collisions with the ship, but there should be enough space for future maneuvers.
+
+4) On collision with a sphere save the score with a player's name and start new game.
+
+5) Clicking on another “asteroid” activates it and deactivates the previous clicked one. Perhaps, this should mean to change ship's var attractedTo to a new object.
+
+6) 
