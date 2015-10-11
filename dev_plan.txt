@@ -1,7 +1,7 @@
 ﻿(proposed) DEVELOPMENT PLAN.
 Meta:
 - code should be modular: separated into small functions, “classes” separated into different files.
-- ideally, code itself should tell you how smthing is done, rare code comments are for why smthing is done.
+- ideally, code itself should tell you how smthing is done, code comments are for why smthing is done (when it's non-obvious).
 
 Steps:
 
