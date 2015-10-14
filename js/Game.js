@@ -1,22 +1,32 @@
 RENAME_ME.Game = function(game) {
 	this ship;
 	this asteroids;
+	this miners;
+	this score;
 };
 
 RENAME_ME.Game.prototype = {
 	create: function() {
+		this score = 0;
 		// Adjusting physics
 	    game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
 	    game.add.sprite(0, 0, 'space');
 	    // Adding ship
-	    this.ship = game.add.sprite(350, game.world.height - 120, 'ship');
+	    this.ship = game.add.sprite(game.world.centerX, game.world.height - 100, 'ship');
 	    // Adjusting physics to the ship
 	    game.physics.arcade.enable(ship);
 	    // Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
 	    // Setting ship collision
 	    this.ship.body.collideWorldBounds = true;
+	    // Initial velocity of the ship
+	    this.ship.body.velocity.x = 0;
+	    this.ship.body.velocity.y = 3;
+
+	    //ship's anchor is in the middle of the sprite
+	    this.ship.anchor.setTo(0.5, 0.5);
+	    game.camera.follow(this.ship);
 
 	    // Adding asteroids group
 	    this.asteroids = game.add.group();
@@ -60,10 +70,7 @@ RENAME_ME.Game.prototype = {
 		// Overlap settings
 	    game.physics.arcade.overlap(asteroids, ship, asteroidCollision, this, null);
 
-	    // Initial velocity of the ship
-	    this.ship.body.velocity.x = 0;
-	    this.ship.body.velocity.y = 0;
-
+	    /*
 	    if (cursors.left.isDown)
 	    {
 	        //  Move to the left
@@ -85,6 +92,7 @@ RENAME_ME.Game.prototype = {
 	        // Move down
 	        this.ship.body.velocity.y = 650;
 	    }
+	    */
 	},
 
 	quitGame: function(pointer) {
