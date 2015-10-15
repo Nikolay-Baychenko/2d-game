@@ -1,13 +1,14 @@
 RENAME_ME.Game = function(game) {
-	this ship;
-	this asteroids;
-	this miners;
-	this score;
+	this.ship;
+	this.asteroids;
+	this.numAsteroids = 10;
+	this.miners;
+	this.score;
 };
 
 RENAME_ME.Game.prototype = {
 	create: function() {
-		this score = 0;
+		this.score = 0;
 		// Adjusting physics
 	    game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
@@ -18,8 +19,6 @@ RENAME_ME.Game.prototype = {
 	    game.physics.arcade.enable(ship);
 	    // Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
-	    // Setting ship collision
-	    this.ship.body.collideWorldBounds = true;
 	    // Initial velocity of the ship
 	    this.ship.body.velocity.x = 0;
 	    this.ship.body.velocity.y = 3;
@@ -34,12 +33,16 @@ RENAME_ME.Game.prototype = {
 	    this.asteroids.enableBody = true;
 	    // Creating asteroids
 
-	    for (var i = 0; i < 30; i++)
+	    for (var i = 0; i < numAsteroids; ++i)
 	    {
 	        var randomPlace = Math.random() * (1000 - 1) + 1;
 	        var asteroid = this.asteroids.create(randomPlace, -1000 * i, 'asteroid');
+	        asteroid.events.onInputDown.add(activateAsteroid,this);
+
+	        /*
 	        var randomGravity = Math.random() * (45 - 40) + 40;
 	        asteroid.body.gravity.y = randomGravity;
+	        */
 	    }
 
 	    /*
@@ -63,7 +66,7 @@ RENAME_ME.Game.prototype = {
 
 
 	    // Enable controls
-	    cursors = game.input.keyboard.createCursorKeys();
+	    //cursors = game.input.keyboard.createCursorKeys();
 	},
 
 	update: function() {
@@ -93,6 +96,10 @@ RENAME_ME.Game.prototype = {
 	        this.ship.body.velocity.y = 650;
 	    }
 	    */
+	},
+
+	activateAsteroid: function(asteroid, pointer) {
+
 	},
 
 	quitGame: function(pointer) {

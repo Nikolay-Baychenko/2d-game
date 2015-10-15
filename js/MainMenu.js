@@ -4,7 +4,7 @@ RENAME_ME.MainMenu = function (game) {
 RENAME_ME.MainMenu.prototype = {
 
 	create: function () {
-		this.game.stage.backgroundColor = '#ffffff';
+		this.game.stage.backgroundColor = '#000000';
 	},
 
 	play: function() {
