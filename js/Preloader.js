@@ -14,8 +14,9 @@ RENAME_ME.Preloader.prototype = {
     },
 
     create: function() {
+        /*
         this.game.stage.backgroundColor = '#ffffff';
-        var logo = this.add.sprite(this.world.width/2, this.world.height/2, 'appsbude');
+        var logo = this.add.sprite(this.world.width/2, this.world.height/2, 'logo');
         logo.anchor.set(0.5, 0.5);
 
         this.game.time.events.add(Phaser.Timer.SECOND * 2.0, function() {
@@ -30,6 +31,8 @@ RENAME_ME.Preloader.prototype = {
 
             tween.start();
         }, this);
+        */
+        this.startGame();
     },
 
     startGame: function() {

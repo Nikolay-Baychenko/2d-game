@@ -31,7 +31,7 @@ RENAME_ME.Boot.prototype = {
     },
 
     preload: function () {
-        this.load.image('logo', 'assets/imgs/logo.jpg');
+        this.load.image('logo', 'assets/imgs/logo.png');
     },
 
     create: function () {

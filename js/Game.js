@@ -10,34 +10,34 @@ RENAME_ME.Game.prototype = {
 	create: function() {
 		this.score = 0;
 		// Adjusting physics
-	    game.physics.startSystem(Phaser.Physics.ARCADE);
+	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
-	    game.add.sprite(0, 0, 'space');
+	    this.game.add.sprite(0, 0, 'space');
 	    // Adding ship
-	    this.ship = game.add.sprite(game.world.centerX, game.world.height - 100, 'ship');
+	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 100, 'ship');
 	    // Adjusting physics to the ship
-	    game.physics.arcade.enable(ship);
+	    this.game.physics.arcade.enable(this.ship);
 	    // Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
 	    // Initial velocity of the ship
 	    this.ship.body.velocity.x = 0;
-	    this.ship.body.velocity.y = 3;
+	    this.ship.body.velocity.y = -30;
 
 	    //ship's anchor is in the middle of the sprite
 	    this.ship.anchor.setTo(0.5, 0.5);
-	    game.camera.follow(this.ship);
+	    this.game.camera.follow(this.ship);
 
 	    // Adding asteroids group
-	    this.asteroids = game.add.group();
+	    this.asteroids = this.game.add.group();
 	    // Adjusting physics for asteroids
 	    this.asteroids.enableBody = true;
 	    // Creating asteroids
 
-	    for (var i = 0; i < numAsteroids; ++i)
+	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
 	        var randomPlace = Math.random() * (1000 - 1) + 1;
 	        var asteroid = this.asteroids.create(randomPlace, -1000 * i, 'asteroid');
-	        asteroid.events.onInputDown.add(activateAsteroid,this);
+	        asteroid.events.onInputDown.add(this.activateAsteroid, this);
 
 	        /*
 	        var randomGravity = Math.random() * (45 - 40) + 40;
@@ -66,12 +66,12 @@ RENAME_ME.Game.prototype = {
 
 
 	    // Enable controls
-	    //cursors = game.input.keyboard.createCursorKeys();
+	    //cursors = this.game.input.keyboard.createCursorKeys();
 	},
 
 	update: function() {
 		// Overlap settings
-	    game.physics.arcade.overlap(asteroids, ship, asteroidCollision, this, null);
+	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, this, null);
 
 	    /*
 	    if (cursors.left.isDown)
