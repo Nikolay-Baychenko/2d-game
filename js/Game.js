@@ -12,7 +12,8 @@ RENAME_ME.Game.prototype = {
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
-	    this.game.add.sprite(0, 0, 'space');
+	    bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
+	    //this.game.add.sprite(0, 0, 'space');
 	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 100, 'ship');
 	    // Adjusting physics to the ship
@@ -21,11 +22,13 @@ RENAME_ME.Game.prototype = {
 	    this.ship.body.gravity.y = 0;
 	    // Initial velocity of the ship
 	    this.ship.body.velocity.x = 0;
-	    this.ship.body.velocity.y = -30;
+	    this.ship.body.velocity.y = 0;
 
 	    //ship's anchor is in the middle of the sprite
 	    this.ship.anchor.setTo(0.5, 0.5);
-	    this.game.camera.follow(this.ship);
+	    //this.game.camera.follow(this.ship);
+	    //deadzone explained here http://phaser.io/examples/v2/camera/deadzone
+	    //this.game.camera.deadzone = new Phaser.Rectangle(100, 30, this.game.width - 200, 100);
 
 	    // Adding asteroids group
 	    this.asteroids = this.game.add.group();
@@ -70,6 +73,7 @@ RENAME_ME.Game.prototype = {
 	},
 
 	update: function() {
+		bg.tilePosition.y += 1;
 		// Overlap settings
 	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, this, null);
 
