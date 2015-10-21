@@ -73,7 +73,7 @@ RENAME_ME.Game.prototype = {
 	},
 
 	update: function() {
-		bg.tilePosition.y += 1;
+		bg.tilePosition.y += 0.09;
 		// Overlap settings
 	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, this, null);
 

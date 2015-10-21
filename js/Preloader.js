@@ -8,7 +8,7 @@ RENAME_ME.Preloader.prototype = {
         // loading image of background
         this.game.load.image('space', 'assets/imgs/space-background.jpg');
         // loading sprite of ship
-        this.game.load.image('ship', 'assets/imgs/ship.gif');
+        this.game.load.image('ship', 'assets/imgs/ship.png');
         // loading sprite of asteroid
         this.game.load.image('asteroid', 'assets/imgs/asteroid.png');
     },
