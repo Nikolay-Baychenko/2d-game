@@ -2,8 +2,10 @@ RENAME_ME.Game = function(game) {
 	this.ship;
 	this.asteroids;
 	this.numAsteroids = 10;
+	this.maxAstersOnScreen = 5;
 	this.miners;
 	this.score;
+	this.bgScrollSpeed = 0.09;
 };
 
 RENAME_ME.Game.prototype = {
@@ -13,6 +15,7 @@ RENAME_ME.Game.prototype = {
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
 	    bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
+	    bg.autoScroll(0, this.bgScrollSpeed);
 	    //this.game.add.sprite(0, 0, 'space');
 	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 100, 'ship');
@@ -38,8 +41,8 @@ RENAME_ME.Game.prototype = {
 
 	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
-	        var randomPlace = Math.random() * (1000 - 1) + 1;
-	        var asteroid = this.asteroids.create(randomPlace, -1000 * i, 'asteroid');
+	        var randomX = Math.random() * this.game.width;
+	        var asteroid = this.asteroids.create(randomX, -1000 * i, 'asteroid');
 	        asteroid.events.onInputDown.add(this.activateAsteroid, this);
 
 	        /*
@@ -58,8 +61,8 @@ RENAME_ME.Game.prototype = {
 	    function generateAsteroid(randomTime) {
 	        setTimeout(function() {
 	            // Setting asteroid's location
-	            var randomPlace = Math.random() * (800 - 1) + 1;
-	            var asteroid = asteroids.create(randomPlace, 10, 'asteroid');
+	            var randomX = Math.random() * (800 - 1) + 1;
+	            var asteroid = asteroids.create(randomX, 10, 'asteroid');
 	            // Setting gravity for asteroid
 	            var randomGravity = Math.random() * (400 - 200) + 200;
 	            asteroid.body.gravity.y = randomGravity;
@@ -73,7 +76,6 @@ RENAME_ME.Game.prototype = {
 	},
 
 	update: function() {
-		bg.tilePosition.y += 0.09;
 		// Overlap settings
 	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, this, null);
 
