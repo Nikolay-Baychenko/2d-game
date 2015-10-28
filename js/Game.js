@@ -2,6 +2,7 @@ RENAME_ME.Game = function(game) {
 	this.ship;
 	this.asteroids;
 	this.numAsteroids = 10;
+
 	this.maxAstersOnScreen = 5;
 	this.miners;
 	this.score;
@@ -42,7 +43,12 @@ RENAME_ME.Game.prototype = {
 	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
 	        var randomX = Math.random() * this.game.width;
-	        var asteroid = this.asteroids.create(randomX, -1000 * i, 'asteroid');
+	        var randomY = Math.random() * this.game.height + this.game.height;
+	        var asteroid = this.asteroids.create(randomX, randomY, 'asteroid');
+	        var rand = game.rnd.realInRange(-2, 3);
+
+	        asteroid.scale.setTo(rand, rand);
+	        
 	        asteroid.events.onInputDown.add(this.activateAsteroid, this);
 
 	        /*
