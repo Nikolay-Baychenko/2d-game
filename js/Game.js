@@ -9,6 +9,8 @@ RENAME_ME.Game = function(game) {
 	this.bgScrollSpeed = 0;
 
 	this.YRespawnOffset = this.game.height - this.game.height / 3;
+	this.AsteroidScaleConstant = 0.5;
+	this.AsteroidSpeedFactor = 2;
 };
 
 RENAME_ME.Game.prototype = {
@@ -46,7 +48,9 @@ RENAME_ME.Game.prototype = {
 	        var randomX = Math.random() * this.game.width;
 	        var randomY = Math.random() * this.game.height - this.YRespawnOffset;
 	        var asteroid = this.asteroids.create(randomX, randomY, 'asteroid');
-	        var rand = Math.random() + 0.5; // [0.5, 1.5)
+	        var rand = Math.random() + this.AsteroidScaleConstant; // [C, 1 + C)
+
+			asteroid.speed = Math.random() * this.AsteroidSpeedFactor;
 
 			asteroid.anchor.setTo(0.5, 0.5);
 	        asteroid.scale.setTo(rand, rand);
@@ -86,6 +90,11 @@ RENAME_ME.Game.prototype = {
 
 	    this.killPassedAsteroids();
 	    this.tryToSpawnAsteroid();
+
+	    this.asteroids.forEachAlive(function(asteroid)
+	    	{
+	    		
+	    	}, this);
 
 	    /*
 	    if (cursors.left.isDown)
