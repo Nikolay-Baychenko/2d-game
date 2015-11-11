@@ -3,10 +3,12 @@ RENAME_ME.Game = function(game) {
 	this.asteroids;
 	this.numAsteroids = 10;
 
-	this.maxAstersOnScreen = 5;
+	this.maxAstersOnScreen = 4;
 	this.miners;
 	this.score;
-	this.bgScrollSpeed = 0.09;
+	this.bgScrollSpeed = 0;
+
+	this.YRespawnOffset = this.game.height - this.game.height / 3;
 };
 
 RENAME_ME.Game.prototype = {
@@ -39,22 +41,19 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting physics for asteroids
 	    this.asteroids.enableBody = true;
 	    // Creating asteroids
-
 	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
 	        var randomX = Math.random() * this.game.width;
-	        var randomY = Math.random() * this.game.height + this.game.height;
+	        var randomY = Math.random() * this.game.height - this.YRespawnOffset;
 	        var asteroid = this.asteroids.create(randomX, randomY, 'asteroid');
-	        var rand = game.rnd.realInRange(-2, 3);
+	        var rand = Math.random() + 0.5; // [0.5, 1.5)
 
+			asteroid.anchor.setTo(0.5, 0.5);
 	        asteroid.scale.setTo(rand, rand);
 	        
 	        asteroid.events.onInputDown.add(this.activateAsteroid, this);
 
-	        /*
-	        var randomGravity = Math.random() * (45 - 40) + 40;
-	        asteroid.body.gravity.y = randomGravity;
-	        */
+	        i >= this.maxAstersOnScreen && asteroid.kill(); //hide rest of the asteroids
 	    }
 
 	    /*
@@ -84,6 +83,9 @@ RENAME_ME.Game.prototype = {
 	update: function() {
 		// Overlap settings
 	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, this, null);
+
+	    this.killPassedAsteroids();
+	    this.tryToSpawnAsteroid();
 
 	    /*
 	    if (cursors.left.isDown)
