@@ -8,7 +8,7 @@ RENAME_ME.Game = function(game) {
 	this.score;
 	this.bgScrollSpeed = 0;
 
-	this.YRespawnOffset = this.game.height - this.game.height / 3;
+	this.YRespawnOffset = game.height - game.height / 3;
 	this.AsteroidScaleConstant = 0.5;
 	this.AsteroidSpeedFactor = 2;
 };
@@ -93,7 +93,7 @@ RENAME_ME.Game.prototype = {
 
 	    this.asteroids.forEachAlive(function(asteroid)
 	    	{
-	    		
+	    		asteroid.y -= asteroid.speed;
 	    	}, this);
 
 	    /*
