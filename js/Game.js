@@ -88,12 +88,11 @@ RENAME_ME.Game.prototype = {
 		// Overlap settings
 	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, this, null);
 
-	    this.killPassedAsteroids();
-	    this.tryToSpawnAsteroid();
+	    //this.tryToSpawnAsteroid();
 
 	    this.asteroids.forEachAlive(function(asteroid)
 	    	{
-	    		asteroid.y -= asteroid.speed;
+	    		asteroid.y > this.game.height ? asteroid.kill() : asteroid.y += asteroid.speed;
 	    	}, this);
 
 	    /*
