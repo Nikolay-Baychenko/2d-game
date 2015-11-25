@@ -5,8 +5,8 @@ RENAME_ME.Preloader = function(game) {
 RENAME_ME.Preloader.prototype = {
 
     preload: function() {
-        // loading image of background
-        this.game.load.image('space', 'assets/imgs/space-background.jpg');
+        // loading image of background (random backgroud from sp1 to sp6)
+        this.game.load.image('space', 'assets/imgs/spacescape-imgs/sp'+ (Math.floor(Math.random() * (7 - 1)) + 1) +'.jpg');
         // loading sprite of ship
         this.game.load.image('ship', 'assets/imgs/ship.png');
         // loading sprite of asteroid

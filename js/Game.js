@@ -9,7 +9,7 @@ RENAME_ME.Game = function(game) {
 	this.bgScrollSpeed = 0;
 
 	this.YRespawnOffset = game.height - game.height / 3;
-	this.AsteroidScaleConstant = 0.5;
+	this.AsteroidScaleConstant = 0.1;
 	this.AsteroidSpeedFactor = 2;
 };
 
