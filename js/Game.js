@@ -6,6 +6,7 @@ RENAME_ME.Game = function(game) {
 	this.maxAstersOnScreen = 4;
 	this.miners;
 	this.score;
+	this.scoreText;
 	this.bgScrollSpeed = 0;
 
 	this.YRespawnOffset = game.height - game.height / 3;
@@ -19,11 +20,11 @@ RENAME_ME.Game.prototype = {
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
-	    bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
-	    bg.autoScroll(0, this.bgScrollSpeed);
-	    //this.game.add.sprite(0, 0, 'space');
+	    //bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
+	    //bg.autoScroll(0, this.bgScrollSpeed);
+	    this.game.add.sprite(0, 0, 'space');
 	    // Adding ship
-	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 100, 'ship');
+	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
 	    // Adjusting physics to the ship
 	    this.game.physics.arcade.enable(this.ship);
 	    // Setting gravity of ship to 0
@@ -60,6 +61,8 @@ RENAME_ME.Game.prototype = {
 	        i >= this.maxAstersOnScreen && asteroid.kill(); //hide rest of the asteroids
 	    }
 
+		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
+
 	    /*
 	    for(var i = 0; i < 30; i++)
 	    {
@@ -95,6 +98,7 @@ RENAME_ME.Game.prototype = {
 	    		asteroid.y > this.game.height ? asteroid.kill() : asteroid.y += asteroid.speed;
 	    	}, this);
 
+	    this.scoreText.text = 'Score: ' + this.score;
 	    /*
 	    if (cursors.left.isDown)
 	    {
