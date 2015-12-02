@@ -1,9 +1,14 @@
+// TODO: add 3 types of asteroids: default deadly one (big), medium, small.
+//  	 delete/change code related to the previous game idea
+
 RENAME_ME.Game = function(game) {
 	this.ship;
 	this.fireReloadTime = 2000; // ms
 	this.lastFireTime = game.time.now - this.fireReloadTime;
 	this.asteroids;
 	this.numAsteroids = 10;
+	this.bullets;
+	this.numBulletsInPool = 20;
 
 	this.maxAstersOnScreen = 4;
 	this.miners;
@@ -44,6 +49,15 @@ RENAME_ME.Game.prototype = {
 	    //this.game.camera.follow(this.ship);
 	    //deadzone explained here http://phaser.io/examples/v2/camera/deadzone
 	    //this.game.camera.deadzone = new Phaser.Rectangle(100, 30, this.game.width - 200, 100);
+
+	    this.bullets = this.game.add.group();
+        this.bullets.enableBody = true;
+        this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+        this.bullets.createMultiple(this.numBulletsInPool, 'bullet');
+        this.bullets.setAll('anchor.x', 0.5);
+        this.bullets.setAll('anchor.y', 1);
+        this.bullets.setAll('outOfBoundsKill', true);
+        this.bullets.setAll('checkWorldBounds', true);
 
 	    // Adding asteroids group
 	    this.asteroids = this.game.add.group();
