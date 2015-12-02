@@ -12,6 +12,9 @@ RENAME_ME.Game = function(game) {
 	this.YRespawnOffset = game.height - game.height / 3;
 	this.AsteroidScaleConstant = 0.1;
 	this.AsteroidSpeedFactor = 2;
+
+	this.cursors;
+	this.fireBtn;
 };
 
 RENAME_ME.Game.prototype = {
@@ -84,7 +87,8 @@ RENAME_ME.Game.prototype = {
 
 
 	    // Enable controls
-	    //cursors = this.game.input.keyboard.createCursorKeys();
+	    this.cursors = this.game.input.keyboard.createCursorKeys();
+	    this.fireBtn = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	},
 
 	update: function() {
@@ -98,30 +102,23 @@ RENAME_ME.Game.prototype = {
 	    		asteroid.y > this.game.height ? asteroid.kill() : asteroid.y += asteroid.speed;
 	    	}, this);
 
-	    this.scoreText.text = 'Score: ' + this.score;
-	    /*
-	    if (cursors.left.isDown)
-	    {
-	        //  Move to the left
-	        this.ship.body.velocity.x = -650;
-	    }
-	    else if (cursors.right.isDown)
-	    {
-	        //  Move to the right
-	        this.ship.body.velocity.x = 650;
+	    if (this.ship.alive) {
+	    	if (this.cursors.left.isDown)
+	        {
+	            this.ship.body.velocity.x = -200;
+	        }
+	        else if (this.cursors.right.isDown)
+	        {
+	            this.ship.body.velocity.x = 200;
+	        }
+
+	        //  Firing?
+	        if (this.fireButton.isDown) {
+	            fireBullet();
+	        }
 	    }
 
-	    if (cursors.up.isDown)
-	    {
-	        // Move up
-	        this.ship.body.velocity.y = -650;
-	    }
-	    else if (cursors.down.isDown)
-	    {
-	        // Move down
-	        this.ship.body.velocity.y = 650;
-	    }
-	    */
+	    this.scoreText.text = 'Score: ' + this.score;
 	},
 
 	activateAsteroid: function(asteroid, pointer) {
