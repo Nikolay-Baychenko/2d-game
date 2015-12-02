@@ -1,5 +1,7 @@
 RENAME_ME.Game = function(game) {
 	this.ship;
+	this.fireReloadTime = 2000; // ms
+	this.lastFireTime = game.time.now - this.fireReloadTime;
 	this.asteroids;
 	this.numAsteroids = 10;
 
@@ -7,7 +9,7 @@ RENAME_ME.Game = function(game) {
 	this.miners;
 	this.score;
 	this.scoreText;
-	this.bgScrollSpeed = 0;
+	//this.bgScrollSpeed = 0;
 
 	this.YRespawnOffset = game.height - game.height / 3;
 	this.AsteroidScaleConstant = 0.1;
@@ -20,6 +22,7 @@ RENAME_ME.Game = function(game) {
 RENAME_ME.Game.prototype = {
 	create: function() {
 		this.score = 0;
+		this.reloading = false;
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
@@ -114,14 +117,28 @@ RENAME_ME.Game.prototype = {
 
 	        //  Firing?
 	        if (this.fireButton.isDown) {
-	            fireBullet();
+	            if (this.game.time.now - this.lastFireTime > this.fireReloadTime) {
+	            	this.fire();
+	            	this.lastFireTime = this.game.time.now;
+	            }
 	        }
 	    }
 
 	    this.scoreText.text = 'Score: ' + this.score;
 	},
 
+	// The rest of the methods should be in A-Z order
+
 	activateAsteroid: function(asteroid, pointer) {
+
+	},
+
+	asteroidCollision: function() {
+	    // Destroys the ship
+	    this.ship.kill();
+	},
+
+	fire: function() {
 
 	},
 
@@ -140,10 +157,5 @@ RENAME_ME.Game.prototype = {
 
 	renderGroup: function(member) {
 		this.game.debug.body(member);
-	},
-
-	asteroidCollision: function() {
-	    // Destroys the ship
-	    this.ship.kill();
 	}
 };
