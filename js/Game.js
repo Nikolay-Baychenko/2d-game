@@ -4,7 +4,7 @@
 RENAME_ME.Game = function(game) {
 	this.ship;
 	this.fireReloadTime = 2000; // ms
-	this.lastFireTime = game.time.now - this.fireReloadTime;
+	this.lastFireTime = game.now - this.fireReloadTime;
 	this.asteroids;
 	this.numAsteroids = 10;
 	this.bullets;
@@ -130,10 +130,10 @@ RENAME_ME.Game.prototype = {
 	        }
 
 	        //  Firing?
-	        if (this.fireButton.isDown) {
-	            if (this.game.time.now - this.lastFireTime > this.fireReloadTime) {
+	        if (this.fireBtn.isDown) {
+	            if (this.game.now - this.lastFireTime > this.fireReloadTime) {
 	            	this.fire();
-	            	this.lastFireTime = this.game.time.now;
+	            	this.lastFireTime = this.game.now;
 	            }
 	        }
 	    }
