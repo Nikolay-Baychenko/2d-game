@@ -8,6 +8,7 @@ RENAME_ME.Game = function(game) {
 	this.asteroids;
 	this.numAsteroids = 10;
 	this.bullets;
+	this.bulletSpeedConstant = 2;
 	this.numBulletsInPool = 20;
 
 	this.maxAstersOnScreen = 4;
@@ -50,14 +51,15 @@ RENAME_ME.Game.prototype = {
 	    //deadzone explained here http://phaser.io/examples/v2/camera/deadzone
 	    //this.game.camera.deadzone = new Phaser.Rectangle(100, 30, this.game.width - 200, 100);
 
-	    this.bullets = this.game.add.group();
-        this.bullets.enableBody = true;
-        this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-        this.bullets.createMultiple(this.numBulletsInPool, 'bullet');
-        this.bullets.setAll('anchor.x', 0.5);
-        this.bullets.setAll('anchor.y', 1);
-        this.bullets.setAll('outOfBoundsKill', true);
-        this.bullets.setAll('checkWorldBounds', true);
+		// Adding bullets group
+		this.bullets = this.game.add.group();
+		this.bullets.enableBody = true;
+		this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+		this.bullets.createMultiple(30, 'bullet');
+		this.bullets.setAll('anchor.x', 0.5);
+		this.bullets.setAll('anchor.y', 1);
+		this.bullets.setAll('outOfBoundsKill', true);
+		this.bullets.setAll('checkWorldBounds', true);
 
 	    // Adding asteroids group
 	    this.asteroids = this.game.add.group();
@@ -75,8 +77,7 @@ RENAME_ME.Game.prototype = {
 
 			asteroid.anchor.setTo(0.5, 0.5);
 	        asteroid.scale.setTo(rand, rand);
-	        
-	        asteroid.events.onInputDown.add(this.activateAsteroid, this);
+
 
 	        i >= this.maxAstersOnScreen && asteroid.kill(); //hide rest of the asteroids
 	    }
@@ -110,50 +111,73 @@ RENAME_ME.Game.prototype = {
 
 	update: function() {
 		// Overlap settings
-	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, this, null);
+	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, null, this);
 
 	    //this.tryToSpawnAsteroid();
-
 	    this.asteroids.forEachAlive(function(asteroid)
 	    	{
 	    		asteroid.y > this.game.height ? asteroid.kill() : asteroid.y += asteroid.speed;
 	    	}, this);
 
 	    if (this.ship.alive) {
+			// Stand by after movement
+			this.ship.body.velocity.setTo(0, 0);
+			// Move left
 	    	if (this.cursors.left.isDown)
 	        {
 	            this.ship.body.velocity.x = -200;
 	        }
+			// Move right
 	        else if (this.cursors.right.isDown)
 	        {
 	            this.ship.body.velocity.x = 200;
 	        }
 
-	        //  Firing?
+	        //  Firing
 	        if (this.fireBtn.isDown) {
-	            if (this.game.now - this.lastFireTime > this.fireReloadTime) {
-	            	this.fire();
-	            	this.lastFireTime = this.game.now;
-	            }
+				this.fire();
 	        }
 	    }
+		// Run collision
+		this.game.physics.arcade.overlap(this.bullets, this.asteroids, this.bulletCollision, null, this);
 
 	    this.scoreText.text = 'Score: ' + this.score;
 	},
 
 	// The rest of the methods should be in A-Z order
 
-	activateAsteroid: function(asteroid, pointer) {
-
-	},
 
 	asteroidCollision: function() {
 	    // Destroys the ship
 	    this.ship.kill();
 	},
 
-	fire: function() {
+	bulletCollision: function (bullet, asteroid) {
 
+	//  When a bullet hits an alien we kill them both
+	bullet.kill();
+	asteroid.kill();
+
+	//  Increase the score
+	this.score += 1;
+
+	//  And create an explosion :)		ADD LATTER
+	//var explosion = explosions.getFirstExists(false);
+	//explosion.reset(alien.body.x, alien.body.y);
+	//explosion.play('kaboom', 30, false, true);
+
+	},
+
+	fire: function() {
+			//  Grab the first bullet we can from the pool
+			var bullet = this.bullets.getFirstExists(false);
+
+			if (bullet)
+			{
+				//  And fire it
+				bullet.reset(this.ship.x, this.ship.y + 8);
+				bullet.body.velocity.y = -400;
+			}
 	},
 
 	quitGame: function(pointer) {
