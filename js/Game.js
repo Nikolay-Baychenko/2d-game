@@ -7,18 +7,18 @@ RENAME_ME.Game = function(game) {
 	this.asteroids;
 	this.numAsteroids = 10;
 	this.bullets;
-	this.bulletSpeedConstant = 2;
 	this.numBulletsInPool = 20;
 
 	this.maxAstersOnScreen = 4;
-	this.miners;
 	this.score;
 	this.scoreText;
 	//this.bgScrollSpeed = 0;
 
-	this.YRespawnOffset = game.height - game.height / 3;
-	this.AsteroidScaleConstant = 0.1;
-	this.AsteroidSpeedFactor = 2;
+	this.YRespawnOffset = game.height - game.height / 6;
+	this.asteroidMaxScale = 0.8;
+	this.asteroidMinScale = 0.4;
+	this.asteroidMaxSpeed = 4;
+	this.asteroidMinSpeed = 2;
 
 	this.cursors;
 	this.fireBtn;
@@ -27,12 +27,9 @@ RENAME_ME.Game = function(game) {
 RENAME_ME.Game.prototype = {
 	create: function() {
 		this.score = 0;
-		this.reloading = false;
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
-	    //bg = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
-	    //bg.autoScroll(0, this.bgScrollSpeed);
 	    this.game.add.sprite(0, 0, 'space');
 	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
@@ -43,7 +40,6 @@ RENAME_ME.Game.prototype = {
 	    // Initial velocity of the ship
 	    this.ship.body.velocity.x = 0;
 	    this.ship.body.velocity.y = 0;
-
 	    //ship's anchor is in the middle of the sprite
 	    this.ship.anchor.setTo(0.5, 0.5);
 	    //this.game.camera.follow(this.ship);
@@ -70,10 +66,8 @@ RENAME_ME.Game.prototype = {
 	        var randomX = Math.random() * this.game.width;
 	        var randomY = Math.random() * this.game.height - this.YRespawnOffset;
 	        var asteroid = this.asteroids.create(randomX, randomY, 'asteroid');
-	        var rand = Math.random() + this.AsteroidScaleConstant; // [C, 1 + C)
-
-			asteroid.speed = Math.random() * this.AsteroidSpeedFactor;
-
+			var rand  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
+			asteroid.speed = Math.random() * (this.asteroidMaxSpeed - this.asteroidMinSpeed) + this.asteroidMinSpeed;
 			asteroid.anchor.setTo(0.5, 0.5);
 	        asteroid.scale.setTo(rand, rand);
 
@@ -82,26 +76,6 @@ RENAME_ME.Game.prototype = {
 	    }
 
 		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
-
-	    /*
-	    for(var i = 0; i < 30; i++)
-	    {
-	        var randomTime = Math.random() * (7000 - 2000) + 2000;
-	        generateAsteroid(randomTime);
-	    }
-
-	    function generateAsteroid(randomTime) {
-	        setTimeout(function() {
-	            // Setting asteroid's location
-	            var randomX = Math.random() * (800 - 1) + 1;
-	            var asteroid = asteroids.create(randomX, 10, 'asteroid');
-	            // Setting gravity for asteroid
-	            var randomGravity = Math.random() * (400 - 200) + 200;
-	            asteroid.body.gravity.y = randomGravity;
-	        }, randomTime);
-	    }
-	    */
-
 
 	    // Enable controls
 	    this.cursors = this.game.input.keyboard.createCursorKeys();
