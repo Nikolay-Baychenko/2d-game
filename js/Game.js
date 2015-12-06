@@ -3,8 +3,7 @@
 
 RENAME_ME.Game = function(game) {
 	this.ship;
-	this.fireReloadTime = 2000; // ms
-	this.lastFireTime = game.now - this.fireReloadTime;
+	this.fireReloadTime = 0;
 	this.asteroids;
 	this.numAsteroids = 10;
 	this.bullets;
@@ -169,19 +168,26 @@ RENAME_ME.Game.prototype = {
 	},
 
 	fire: function() {
+		// Timing doesn't work, need to fix
+		if (this.game.time.now > this.fireReloadTime) {
 			//  Grab the first bullet we can from the pool
 			var bullet = this.bullets.getFirstExists(false);
-
-			if (bullet)
-			{
+			if (bullet) {
 				//  And fire it
 				bullet.reset(this.ship.x, this.ship.y + 8);
 				bullet.body.velocity.y = -400;
+				this.fireReloadTime = this.game.time.now + 200;
 			}
+		}
 	},
 
 	quitGame: function(pointer) {
 		this.state.start('MainMenu');
+	},
+
+	resetBullet: function(bullet) {
+		//  Called if the bullet goes out of the screen
+		bullet.kill();
 	},
 
 	render: function() {
