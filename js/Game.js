@@ -5,11 +5,11 @@ RENAME_ME.Game = function(game) {
 	this.ship;
 	this.fireReloadTime = 0;
 	this.asteroids;
-	this.numAsteroids = 10;
+	this.numAsteroids = 200;
 	this.bullets;
 	this.numBulletsInPool = 20;
 
-	this.maxAstersOnScreen = 4;
+	this.maxAstersOnScreen = 10;
 	this.score;
 	this.scoreText;
 	//this.bgScrollSpeed = 0;
@@ -70,8 +70,6 @@ RENAME_ME.Game.prototype = {
 			asteroid.speed = Math.random() * (this.asteroidMaxSpeed - this.asteroidMinSpeed) + this.asteroidMinSpeed;
 			asteroid.anchor.setTo(0.5, 0.5);
 	        asteroid.scale.setTo(rand, rand);
-
-
 	        i >= this.maxAstersOnScreen && asteroid.kill(); //hide rest of the asteroids
 	    }
 
