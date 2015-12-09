@@ -2,6 +2,15 @@
 //  	 delete/change code related to the previous game idea
 
 RENAME_ME.Game = function(game) {
+	this.difficultyParams = {
+		normal: {
+			Param2or3Fragments: 0.2
+		},
+		hard: {
+			Param2or3Fragments: 0.5
+		}
+	}
+
 	this.ship;
 	this.healthPercent;
 	this.healthBar;
@@ -39,10 +48,10 @@ RENAME_ME.Game.prototype = {
 		this.healthPercent = 100;
 		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
 		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
-												 , y: this.game.height - 20
+												 , y: this.game.height - 17
 												 , height: this.HealthBarHeight
 												 , width: this.healthBarWidth});
-		this.healthBar.setPercent(this.healthPercent);
+		this.healthBar.setPercent(this.healthPercent - 30);
 		//this.healthBar.setFixedToCamera(true);
 	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
@@ -63,7 +72,7 @@ RENAME_ME.Game.prototype = {
 		this.bullets = this.game.add.group();
 		this.bullets.enableBody = true;
 		this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-		this.bullets.createMultiple(30, 'bullet');
+		this.bullets.createMultiple(this.numBulletsInPool, 'bullet');
 		this.bullets.setAll('anchor.x', 0.5);
 		this.bullets.setAll('anchor.y', 1);
 		this.bullets.setAll('outOfBoundsKill', true);
@@ -142,6 +151,12 @@ RENAME_ME.Game.prototype = {
 	//  When a bullet hits an alien we kill them both
 	bullet.kill();
 	asteroid.kill();
+
+	if (asteroid.scale >= this.asteroidMinScale) {
+		// spawn the asteroid's debris (i.e. smaller ateroids)
+
+		var numFragments = Math.random() >= this.difficultyParams.normal.Param2or3Fragments ? 2 : 3;
+	}
 
 	//  Increase the score
 	this.score += 1;
