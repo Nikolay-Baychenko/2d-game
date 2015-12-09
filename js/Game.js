@@ -14,7 +14,7 @@ RENAME_ME.Game = function(game) {
 	this.ship;
 	this.healthPercent;
 	this.healthBar;
-	this.HealthBarHeight = 15;
+	this.healthBarHeight = 15;
 	this.healthBarWidth = 180;
 	this.fireReloadTime = 0;
 	this.asteroids;
@@ -25,6 +25,7 @@ RENAME_ME.Game = function(game) {
 	this.maxAstersOnScreen = 10;
 	this.score;
 	this.scoreText;
+	this.stateText;
 	//this.bgScrollSpeed = 0;
 
 	this.YRespawnOffset = game.height - game.height / 6;
@@ -49,9 +50,9 @@ RENAME_ME.Game.prototype = {
 		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
 		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
 												 , y: this.game.height - 17
-												 , height: this.HealthBarHeight
+												 , height: this.healthBarHeight
 												 , width: this.healthBarWidth});
-		this.healthBar.setPercent(this.healthPercent - 30);
+		this.healthBar.setPercent(this.healthPercent);
 		//this.healthBar.setFixedToCamera(true);
 	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
@@ -97,74 +98,94 @@ RENAME_ME.Game.prototype = {
 
 		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
 
+		this.stateText = this.game.add.text(this.game.world.centerX,this.game.world.centerY,' ', { font: '70px Arial', fill: '#fff' });
+	    this.stateText.anchor.setTo(0.5, 0.5);
+	    this.stateText.visible = false;
+
 	    // Enable controls
 	    this.cursors = this.game.input.keyboard.createCursorKeys();
 	    this.fireBtn = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	},
 
 	update: function() {
-		// Overlap settings
-	    this.game.physics.arcade.overlap(this.asteroids, this.ship, this.asteroidCollision, null, this);
-
-	    //this.tryToSpawnAsteroid();
-	    this.asteroids.forEachAlive(function(asteroid)
-	    	{
-	    		asteroid.y > this.game.height ? asteroid.kill() : asteroid.y += asteroid.speed;
-	    	}, this);
-
-	    if (this.ship.alive) {
-			// Stand by after movement
-			this.ship.body.velocity.setTo(0, 0);
-			// Move left
-	    	if (this.cursors.left.isDown)
-	        {
-	            this.ship.body.velocity.x = -200;
-	        }
-			// Move right
-	        else if (this.cursors.right.isDown)
-	        {
-	            this.ship.body.velocity.x = 200;
-	        }
-
-	        //  Firing
-	        if (this.fireBtn.isDown) {
-				this.fire();
-	        }
-	    }
 		// Run collision
+	    this.game.physics.arcade.overlap(this.ship, this.asteroids, this.asteroidCollision, null, this);
 		this.game.physics.arcade.overlap(this.bullets, this.asteroids, this.bulletCollision, null, this);
 
-	    this.scoreText.text = 'Score: ' + this.score;
+	    if (this.healthPercent <= 0) {
+	    	this.gameOver();
+	    }
+	    else {
+	    	//this.tryToSpawnAsteroid();
+		    this.asteroids.forEachAlive(function(asteroid)
+		    	{
+		    		asteroid.y > this.game.height ? asteroid.kill() : asteroid.y += asteroid.speed;
+		    	}, this);
+
+		    if (this.ship.alive) {
+				// Stand by after movement
+				this.ship.body.velocity.setTo(0, 0);
+				// Move left
+		    	if (this.cursors.left.isDown)
+		        {
+		            this.ship.body.velocity.x = -200;
+		        }
+				// Move right
+		        else if (this.cursors.right.isDown)
+		        {
+		            this.ship.body.velocity.x = 200;
+		        }
+
+		        //  Firing
+		        if (this.fireBtn.isDown) {
+					this.fire();
+		        }
+		    }
+
+		    this.scoreText.text = 'Score: ' + this.score;
+	    }
 	},
 
 	// The rest of the methods should be in A-Z order
 
 
-	asteroidCollision: function() {
+	asteroidCollision: function(ship, asteroid) {
 	    // Big asteroids destroy the ship,
 	    // smaller ones drain the ship's "health"
-	    this.ship.kill();
+	    if (asteroid.scale >= this.asteroidMinScale) {
+	    	this.healthPercent = 0;
+	    	this.healthBar.setPercent(this.healthPercent);
+	    	
+	    	this.gameOver();
+	    }
+	    else {
+	    	var healthToDeduce = 25; // btw, JS hoists "vars"/"lets" to the top of a function/block
+	    	this.healthPercent -= healthToDeduce;
+	    	this.healthBar.setPercent(this.healthPercent);
+
+	    	asteroid.kill;
+	    }
 	},
 
 	bulletCollision: function (bullet, asteroid) {
 
-	//  When a bullet hits an alien we kill them both
-	bullet.kill();
-	asteroid.kill();
+		//  When a bullet hits an alien we kill them both
+		bullet.kill();
+		asteroid.kill();
 
-	if (asteroid.scale >= this.asteroidMinScale) {
-		// spawn the asteroid's debris (i.e. smaller ateroids)
+		if (asteroid.scale >= this.asteroidMinScale) {
+			// spawn the asteroid's debris (i.e. smaller ateroids)
 
-		var numFragments = Math.random() >= this.difficultyParams.normal.Param2or3Fragments ? 2 : 3;
-	}
+			var numFragments = Math.random() >= this.difficultyParams.normal.Param2or3Fragments ? 2 : 3;
+		}
 
-	//  Increase the score
-	this.score += 1;
+		//  Increase the score
+		this.score += 1;
 
-	//  And create an explosion :)		ADD LATTER
-	//var explosion = explosions.getFirstExists(false);
-	//explosion.reset(alien.body.x, alien.body.y);
-	//explosion.play('kaboom', 30, false, true);
+		//  And create an explosion :)		ADD LATTER
+		//var explosion = explosions.getFirstExists(false);
+		//explosion.reset(alien.body.x, alien.body.y);
+		//explosion.play('kaboom', 30, false, true);
 
 	},
 
@@ -180,6 +201,15 @@ RENAME_ME.Game.prototype = {
 				this.fireReloadTime = this.game.time.now + 400;
 			}
 		}
+	},
+
+	gameOver: function() {
+		this.ship.kill();
+		this.stateText.text = " GAME OVER \n  Final score:\n      "+ this.score +"\n (click to restart)";
+    	this.stateText.visible = true;
+
+        //the "click to restart" handler
+        this.game.input.onTap.addOnce(this.restart, this);
 	},
 
 	quitGame: function(pointer) {
@@ -202,5 +232,9 @@ RENAME_ME.Game.prototype = {
 	resetBullet: function(bullet) {
 		//  Called if the bullet goes out of the screen
 		bullet.kill();
+	},
+
+	restart: function() {
+
 	}
 };
