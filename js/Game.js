@@ -160,7 +160,7 @@ RENAME_ME.Game.prototype = {
 			var bullet = this.bullets.getFirstExists(false);
 			if (bullet) {
 				//  And fire it
-				bullet.reset(this.ship.x, this.ship.y + 8);
+				bullet.reset(this.ship.x, this.ship.y + 15);
 				bullet.body.velocity.y = -400;
 				this.fireReloadTime = this.game.time.now + 200;
 			}
