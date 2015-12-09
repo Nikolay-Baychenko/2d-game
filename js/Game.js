@@ -3,7 +3,10 @@
 
 RENAME_ME.Game = function(game) {
 	this.ship;
-	this.healthPerc;
+	this.healthPercent;
+	this.healthBar;
+	this.HealthBarHeight = 15;
+	this.healthBarWidth = 180;
 	this.fireReloadTime = 0;
 	this.asteroids;
 	this.numAsteroids = 200;
@@ -27,12 +30,20 @@ RENAME_ME.Game = function(game) {
 
 RENAME_ME.Game.prototype = {
 	create: function() {
-		this.healthPerc = 100;
 		this.score = 0;
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
 	    this.game.add.sprite(0, 0, 'space');
+
+		this.healthPercent = 100;
+		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
+		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
+												 , y: this.game.height - 20
+												 , height: this.HealthBarHeight
+												 , width: this.healthBarWidth});
+		this.healthBar.setPercent(this.healthPercent);
+		//this.healthBar.setFixedToCamera(true);
 	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
 	    // Adjusting physics to the ship
