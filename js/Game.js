@@ -3,6 +3,7 @@
 
 RENAME_ME.Game = function(game) {
 	this.ship;
+	this.healthPerc;
 	this.fireReloadTime = 0;
 	this.asteroids;
 	this.numAsteroids = 200;
@@ -26,6 +27,7 @@ RENAME_ME.Game = function(game) {
 
 RENAME_ME.Game.prototype = {
 	create: function() {
+		this.healthPerc = 100;
 		this.score = 0;
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -119,7 +121,8 @@ RENAME_ME.Game.prototype = {
 
 
 	asteroidCollision: function() {
-	    // Destroys the ship
+	    // Big asteroids destroy the ship,
+	    // smaller ones drain the ship's "health"
 	    this.ship.kill();
 	},
 
@@ -157,11 +160,6 @@ RENAME_ME.Game.prototype = {
 		this.state.start('MainMenu');
 	},
 
-	resetBullet: function(bullet) {
-		//  Called if the bullet goes out of the screen
-		bullet.kill();
-	},
-
 	render: function() {
 		/* this.game.debug.body(this.planes[0].getSprite());
 		this.game.debug.body(this.planes[1].getSprite());
@@ -173,5 +171,10 @@ RENAME_ME.Game.prototype = {
 
 	renderGroup: function(member) {
 		this.game.debug.body(member);
+	},
+
+	resetBullet: function(bullet) {
+		//  Called if the bullet goes out of the screen
+		bullet.kill();
 	}
 };
