@@ -96,7 +96,7 @@ RENAME_ME.Game.prototype = {
 	        asteroid.scale.setTo(rand, rand);
 
 	        ++this.counterToControlAsteroidsSpawn;
-	        this.counterToControlAsteroidsSpawn > 0 && asteroid.kill(); //hide rest of the asteroids
+	        this.counterToControlAsteroidsSpawn > 0 && asteroid.kill(); //hides rest of the asteroids
 	    }
 
 		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
