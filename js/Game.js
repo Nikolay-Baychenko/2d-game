@@ -29,6 +29,7 @@ RENAME_ME.Game = function(game) {
 	//this.bgScrollSpeed = 0;
 
 	this.yRespawnOffset = game.height - game.height / 6;
+	this.XYScaleSpeedForAsteroid = {}; // 4 params for an asteroid-to-spawn
 	this.asteroidMaxScale = 0.8;
 	this.asteroidMinScale = 0.4;
 	this.asteroidMaxSpeed = 4;
@@ -37,6 +38,9 @@ RENAME_ME.Game = function(game) {
 
 	this.cursors;
 	this.fireBtn;
+
+	// more funny constants:
+	this.thirdTheScreen = game.height / 3;
 };
 
 RENAME_ME.Game.prototype = {
@@ -87,13 +91,11 @@ RENAME_ME.Game.prototype = {
 	    // Creating asteroids
 	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
-	        var randomX = Math.random() * this.game.width;
-	        var randomY = Math.random() * this.game.height - this.yRespawnOffset;
-	        var asteroid = this.asteroids.create(randomX, randomY, 'asteroid');
-			var rand  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
-			asteroid.speed = Math.random() * (this.asteroidMaxSpeed - this.asteroidMinSpeed) + this.asteroidMinSpeed;
+	    	this.updateXYScaleSpeedVar();
+	        var asteroid = this.asteroids.create(this.XYScaleSpeedForAsteroid['x'], this.XYScaleSpeedForAsteroid['y'], 'asteroid');
+			asteroid.speed = this.XYScaleSpeedForAsteroid['speed'];
 			asteroid.anchor.setTo(0.5, 0.5);
-	        asteroid.scale.setTo(rand, rand);
+	        asteroid.scale.setTo(this.XYScaleSpeedForAsteroid['scale'], this.XYScaleSpeedForAsteroid['scale']);
 
 	        ++this.counterToControlAsteroidsSpawn;
 	        this.counterToControlAsteroidsSpawn > 0 && asteroid.kill(); //hides rest of the asteroids
@@ -213,6 +215,13 @@ RENAME_ME.Game.prototype = {
 
         //the "click to restart" handler
         this.game.input.onTap.addOnce(this.restart, this);
+	},
+
+	updateXYScaleSpeedVar: function() {
+		this.XYScaleSpeedForAsteroid['x'] = Math.random() * this.game.width;
+	    this.XYScaleSpeedForAsteroid['y'] = Math.random() * this.game.height * -2 - this.thirdTheScreen;
+	    this.XYScaleSpeedForAsteroid['scale']  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
+		this.XYScaleSpeedForAsteroid['speed'] = Math.random() * (this.asteroidMaxSpeed - this.asteroidMinSpeed) + this.asteroidMinSpeed;
 	},
 
 	quitGame: function(pointer) {
