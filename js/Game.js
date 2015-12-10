@@ -4,15 +4,14 @@
 RENAME_ME.Game = function(game) {
 	this.difficultyParams = {
 		normal: {
-			Param2or3Fragments: 0.2
+			param2or3Fragments: 0.2
 		},
 		hard: {
-			Param2or3Fragments: 0.5
+			param2or3Fragments: 0.5
 		}
 	};
 
 	this.ship;
-	this.healthPercent;
 	this.healthBar;
 	this.healthBarHeight = 15;
 	this.healthBarWidth = 180;
@@ -28,12 +27,13 @@ RENAME_ME.Game = function(game) {
 	this.stateText;
 	//this.bgScrollSpeed = 0;
 
-	this.yRespawnOffset = game.height - game.height / 6;
 	this.XYScaleSpeedForAsteroid = {}; // 4 params for an asteroid-to-spawn
 	this.asteroidMaxScale = 0.8;
 	this.asteroidMinScale = 0.4;
 	this.asteroidMaxSpeed = 4;
 	this.asteroidMinSpeed = 2;
+	this.asteroidSmallScale = this.asteroidMinScale / 3;
+	this.asteroidEvenSmallerScale = this.asteroidMinScale / 3.5;
 	this.counterToControlAsteroidsSpawn = -6; // try to spawn then <= 0
 
 	this.cursors;
@@ -41,6 +41,7 @@ RENAME_ME.Game = function(game) {
 
 	// more funny constants:
 	this.thirdTheScreen = game.height / 3;
+	this.fragmentsScatterMaxDistance = 40;
 };
 
 RENAME_ME.Game.prototype = {
@@ -51,13 +52,13 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting background
 	    this.game.add.sprite(0, 0, 'space');
 
-		this.healthPercent = 100;
+		this.ship.health = 100;
 		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
 		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
 												 , y: this.game.height - 17
 												 , height: this.healthBarHeight
 												 , width: this.healthBarWidth});
-		this.healthBar.setPercent(this.healthPercent);
+		this.healthBar.setPercent(this.ship.health);
 		//this.healthBar.setFixedToCamera(true);
 	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
@@ -117,7 +118,7 @@ RENAME_ME.Game.prototype = {
 	    this.game.physics.arcade.overlap(this.ship, this.asteroids, this.asteroidCollision, null, this);
 		this.game.physics.arcade.overlap(this.bullets, this.asteroids, this.bulletCollision, null, this);
 
-	    if (this.healthPercent <= 0) {
+	    if (this.ship.health <= 0) {
 	    	this.gameOver();
 	    }
 	    else {
@@ -157,34 +158,50 @@ RENAME_ME.Game.prototype = {
 	asteroidCollision: function(ship, asteroid) {
 	    // Big asteroids destroy the ship,
 	    // smaller ones drain the ship's "health"
-	    if (asteroid.scale >= this.asteroidMinScale) {
-	    	this.healthPercent = 0;
-	    	this.healthBar.setPercent(this.healthPercent);
+	    if (asteroid.scale.x >= this.asteroidMinScale) {
+	    	this.ship.damage(100);
+	    	this.healthBar.setPercent(this.ship.health);
 	    	
 	    	this.gameOver();
 	    }
 	    else {
 	    	var healthToDeduce = 25; // btw, JS hoists "vars"/"lets" to the top of a function/block
-	    	this.healthPercent -= healthToDeduce;
-	    	this.healthBar.setPercent(this.healthPercent);
+	    	this.ship.damage(healthToDeduce);
+	    	this.healthBar.setPercent(this.ship.health);
 
 	    	asteroid.kill;
 	    }
 	},
 
 	bulletCollision: function (bullet, asteroid) {
-
-		//  When a bullet hits an alien we kill them both
 		bullet.kill();
-		asteroid.kill();
 
-		if (asteroid.scale >= this.asteroidMinScale) {
+		if (asteroid.scale.x >= this.asteroidMinScale) {
 			// spawn the asteroid's debris (i.e. smaller ateroids)
+			var numFragmentsMinusOne = Math.random() >= this.difficultyParams.normal.param2or3Fragments ? 1 : 2; //we reuse hitted asteroid as 1 of the fragments
+			var fragment;
+			var scatterDistance;
+			var fragmentScale;
 
-			var numFragments = Math.random() >= this.difficultyParams.normal.Param2or3Fragments ? 2 : 3;
+			for (var i = 0; i < numFragmentsMinusOne; ++i) {
+				fragment = this.asteroids.getFirstDead();
+				scatterDistance = Math.random() * this.fragmentsScatterMaxDistance;
+				fragment.x = Math.random() > 0.5 ? asteroid.x - scatterDistance : asteroid.x + scatterDistance;
+				fragment.y = asteroid.y - scatterDistance;
+				if (asteroid.scale.x >= this.asteroidMinScale) {
+					fragmentScale = numFragmentsMinusOne == 2 ? this.asteroidEvenSmallerScale : this.asteroidSmallScale;
+					fragment.scale.setTo(fragmentScale, fragmentScale);
+				}
+				// speed
+				fragment.revive();
+			}
+			// make asteroid its fragment
+
+		}
+		else {
+			asteroid.kill();
 		}
 
-		//  Increase the score
 		this.score += 1;
 
 		//  And create an explosion :)		ADD LATTER
@@ -209,7 +226,7 @@ RENAME_ME.Game.prototype = {
 	},
 
 	gameOver: function() {
-		this.ship.kill();
+		//this.ship.kill(); ship is killed automatically than its health <= 0
 		this.stateText.text = " GAME OVER \n  Final score:\n      "+ this.score +"\n (click to restart)";
     	this.stateText.visible = true;
 
