@@ -18,21 +18,22 @@ RENAME_ME.Game = function(game) {
 	this.healthBarWidth = 180;
 	this.fireReloadTime = 0;
 	this.asteroids;
-	this.numAsteroids = 200;
+	this.numAsteroids = 80; // in pool (alive & killed)
 	this.bullets;
 	this.numBulletsInPool = 20;
 
-	this.maxAstersOnScreen = 10;
+	//this.maxAstersOnScreen = 10;
 	this.score;
 	this.scoreText;
 	this.stateText;
 	//this.bgScrollSpeed = 0;
 
-	this.YRespawnOffset = game.height - game.height / 6;
+	this.yRespawnOffset = game.height - game.height / 6;
 	this.asteroidMaxScale = 0.8;
 	this.asteroidMinScale = 0.4;
 	this.asteroidMaxSpeed = 4;
 	this.asteroidMinSpeed = 2;
+	this.counterToControlAsteroidsSpawn = -6; // try to spawn then <= 0
 
 	this.cursors;
 	this.fireBtn;
@@ -87,13 +88,15 @@ RENAME_ME.Game.prototype = {
 	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
 	        var randomX = Math.random() * this.game.width;
-	        var randomY = Math.random() * this.game.height - this.YRespawnOffset;
+	        var randomY = Math.random() * this.game.height - this.yRespawnOffset;
 	        var asteroid = this.asteroids.create(randomX, randomY, 'asteroid');
 			var rand  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
 			asteroid.speed = Math.random() * (this.asteroidMaxSpeed - this.asteroidMinSpeed) + this.asteroidMinSpeed;
 			asteroid.anchor.setTo(0.5, 0.5);
 	        asteroid.scale.setTo(rand, rand);
-	        i >= this.maxAstersOnScreen && asteroid.kill(); //hide rest of the asteroids
+
+	        ++this.counterToControlAsteroidsSpawn;
+	        this.counterToControlAsteroidsSpawn > 0 && asteroid.kill(); //hide rest of the asteroids
 	    }
 
 		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
