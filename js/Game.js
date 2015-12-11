@@ -12,6 +12,7 @@ RENAME_ME.Game = function(game) {
 	};
 
 	this.ship;
+	this.shipVelocityX = 180;
 	this.healthBar;
 	this.healthBarHeight = 15;
 	this.healthBarWidth = 180;
@@ -27,13 +28,17 @@ RENAME_ME.Game = function(game) {
 	this.stateText;
 	//this.bgScrollSpeed = 0;
 
-	this.XYScaleSpeedForAsteroid = {}; // 4 params for an asteroid-to-spawn
+	this.XYScaleVelocityForAsteroid = {velocity: {}}; // 4 params for an asteroid-to-spawn
 	this.asteroidMaxScale = 0.8;
 	this.asteroidMinScale = 0.4;
-	this.asteroidMaxSpeed = 4;
-	this.asteroidMinSpeed = 2;
-	this.asteroidSmallScale = this.asteroidMinScale / 3;
-	this.asteroidEvenSmallerScale = this.asteroidMinScale / 3.5;
+	this.asteroidMaxSpeedY = 90;
+	this.asteroidMinSpeedY = 30;
+	this.asteroidMaxSpeedX = 10;
+	this.asteroidMinSpeedX = 1;
+	this.smallAsteroidVelMultiplierX = 3;
+	this.smallAsteroidVelMultiplierY = 1.2;
+	this.smallAsteroidScale = this.asteroidMinScale / 3;
+	this.evenSmallerAsteroidScale = this.asteroidMinScale / 3.5;
 	this.counterToControlAsteroidsSpawn = -6; // try to spawn then <= 0
 
 	this.cursors;
@@ -93,10 +98,10 @@ RENAME_ME.Game.prototype = {
 	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
 	    	this.updateXYScaleSpeedVar();
-	        var asteroid = this.asteroids.create(this.XYScaleSpeedForAsteroid['x'], this.XYScaleSpeedForAsteroid['y'], 'asteroid');
-			asteroid.speed = this.XYScaleSpeedForAsteroid['speed'];
+	        var asteroid = this.asteroids.create(this.XYScaleVelocityForAsteroid['x'], this.XYScaleVelocityForAsteroid['y'], 'asteroid');
+			asteroid.body.velocity.setTo(this.XYScaleVelocityForAsteroid['velocity'].x, this.XYScaleVelocityForAsteroid['velocity'].y);
 			asteroid.anchor.setTo(0.5, 0.5);
-	        asteroid.scale.setTo(this.XYScaleSpeedForAsteroid['scale'], this.XYScaleSpeedForAsteroid['scale']);
+	        asteroid.scale.setTo(this.XYScaleVelocityForAsteroid['scale'], this.XYScaleVelocityForAsteroid['scale']);
 
 	        ++this.counterToControlAsteroidsSpawn;
 	        this.counterToControlAsteroidsSpawn > 0 && asteroid.kill(); //hides rest of the asteroids
@@ -125,7 +130,12 @@ RENAME_ME.Game.prototype = {
 	    	//this.tryToSpawnAsteroid();
 		    this.asteroids.forEachAlive(function(asteroid)
 		    	{
-		    		asteroid.y > this.game.height ? asteroid.kill() : asteroid.y += asteroid.speed;
+		    		if (asteroid.y > this.game.height)
+		    			asteroid.kill(); 
+		    		else {
+		    			asteroid.x += asteroid.body.velocity.x;
+		    			asteroid.y += asteroid.body.velocity.y;
+		    		}
 		    	}, this);
 
 		    if (this.ship.alive) {
@@ -134,12 +144,12 @@ RENAME_ME.Game.prototype = {
 				// Move left
 		    	if (this.cursors.left.isDown)
 		        {
-		            this.ship.body.velocity.x = -200;
+		            this.ship.body.velocity.x = -this.shipVelocityX;
 		        }
 				// Move right
 		        else if (this.cursors.right.isDown)
 		        {
-		            this.ship.body.velocity.x = 200;
+		            this.ship.body.velocity.x = this.shipVelocityX;
 		        }
 
 		        //  Firing
@@ -189,10 +199,10 @@ RENAME_ME.Game.prototype = {
 				fragment.x = Math.random() > 0.5 ? asteroid.x - scatterDistance : asteroid.x + scatterDistance;
 				fragment.y = asteroid.y - scatterDistance;
 				if (asteroid.scale.x >= this.asteroidMinScale) {
-					fragmentScale = numFragmentsMinusOne == 2 ? this.asteroidEvenSmallerScale : this.asteroidSmallScale;
+					fragmentScale = numFragmentsMinusOne == 2 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
 					fragment.scale.setTo(fragmentScale, fragmentScale);
 				}
-				// speed
+				// velocity
 				fragment.revive();
 			}
 			// make asteroid its fragment
@@ -234,13 +244,6 @@ RENAME_ME.Game.prototype = {
         this.game.input.onTap.addOnce(this.restart, this);
 	},
 
-	updateXYScaleSpeedVar: function() {
-		this.XYScaleSpeedForAsteroid['x'] = Math.random() * this.game.width;
-	    this.XYScaleSpeedForAsteroid['y'] = Math.random() * this.game.height * -2 - this.thirdTheScreen;
-	    this.XYScaleSpeedForAsteroid['scale']  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
-		this.XYScaleSpeedForAsteroid['speed'] = Math.random() * (this.asteroidMaxSpeed - this.asteroidMinSpeed) + this.asteroidMinSpeed;
-	},
-
 	quitGame: function(pointer) {
 		this.state.start('MainMenu');
 	},
@@ -265,5 +268,12 @@ RENAME_ME.Game.prototype = {
 
 	restart: function() {
 
-	}
+	},
+
+	updateXYScaleSpeedVar: function() {
+		this.XYScaleVelocityForAsteroid['x'] = Math.random() * this.game.width;
+	    this.XYScaleVelocityForAsteroid['y'] = Math.random() * this.game.height * -2 - this.thirdTheScreen;
+	    this.XYScaleVelocityForAsteroid['scale']  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
+		this.XYScaleVelocityForAsteroid.velocity.y = Math.random() * (this.asteroidMaxSpeedY - this.asteroidMinSpeedY) + this.asteroidMinSpeedY;
+	},
 };
