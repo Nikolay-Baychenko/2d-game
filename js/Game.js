@@ -31,10 +31,10 @@ RENAME_ME.Game = function(game) {
 	this.XYScaleVelocityForAsteroid = {velocity: {}}; // 4 params for an asteroid-to-spawn
 	this.asteroidMaxScale = 0.8;
 	this.asteroidMinScale = 0.4;
-	this.asteroidMaxSpeedY = 90;
-	this.asteroidMinSpeedY = 30;
-	this.asteroidMaxSpeedX = 10;
-	this.asteroidMinSpeedX = 1;
+	this.asteroidMaxSpeedY = 4;
+	this.asteroidMinSpeedY = 2;
+	this.asteroidMaxSpeedX = 0.5;
+	this.asteroidMinSpeedX = 0.1;
 	this.smallAsteroidVelMultiplierX = 3;
 	this.smallAsteroidVelMultiplierY = 1.2;
 	this.smallAsteroidScale = this.asteroidMinScale / 3;
@@ -57,15 +57,6 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting background
 	    this.game.add.sprite(0, 0, 'space');
 
-		this.ship.health = 100;
-		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
-		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
-												 , y: this.game.height - 17
-												 , height: this.healthBarHeight
-												 , width: this.healthBarWidth});
-		this.healthBar.setPercent(this.ship.health);
-		//this.healthBar.setFixedToCamera(true);
-	    // Adding ship
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
 	    // Adjusting physics to the ship
 	    this.game.physics.arcade.enable(this.ship);
@@ -79,6 +70,14 @@ RENAME_ME.Game.prototype = {
 	    //this.game.camera.follow(this.ship);
 	    //deadzone explained here http://phaser.io/examples/v2/camera/deadzone
 	    //this.game.camera.deadzone = new Phaser.Rectangle(100, 30, this.game.width - 200, 100);
+
+		this.ship.health = 100;
+		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
+		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
+												 , y: this.game.height - 17
+												 , height: this.healthBarHeight
+												 , width: this.healthBarWidth});
+		this.healthBar.setPercent(this.ship.health);
 
 		// Adding bullets group
 		this.bullets = this.game.add.group();
@@ -192,6 +191,7 @@ RENAME_ME.Game.prototype = {
 			var fragment;
 			var scatterDistance;
 			var fragmentScale;
+			var fragmentVelX = asteroid.x;
 
 			for (var i = 0; i < numFragmentsMinusOne; ++i) {
 				fragment = this.asteroids.getFirstDead();
@@ -202,10 +202,15 @@ RENAME_ME.Game.prototype = {
 					fragmentScale = numFragmentsMinusOne == 2 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
 					fragment.scale.setTo(fragmentScale, fragmentScale);
 				}
-				// velocity
+				if (i < 1) {
+					fragmentVelX *= (Math.random() > 0.5 ? this.smallAsteroidVelMultiplierX : (this.smallAsteroidVelMultiplierX * -1));
+				}
+				fragment.body.velocity.setTo(fragmentVelX,
+											 asteroid.y * this.smallAsteroidVelMultiplierY);
 				fragment.revive();
 			}
-			// make asteroid its fragment
+
+			// make a final fragment from the asteroid
 
 		}
 		else {
