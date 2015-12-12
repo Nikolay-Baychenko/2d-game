@@ -46,7 +46,9 @@ RENAME_ME.Game = function(game) {
 	this.smallAsteroidVelMultiplierY = 1.2;
 	this.smallAsteroidScale = this.asteroidMinScale / 3;
 	this.evenSmallerAsteroidScale = this.asteroidMinScale / 3.5;
-	this.counterToControlAsteroidsSpawn = -6; // try to spawn then <= 0
+
+	this.asteroidsAliveCounter = 0; // big, deadly asteroids
+	this.fragmentsAliveCounter = 0;
 
 	this.cursors;
 	this.fireBtn;
@@ -56,6 +58,7 @@ RENAME_ME.Game = function(game) {
 	this.fragmentsScatterMaxDistance = 40;
 	this.xSpawnCoordOffset = game.width / 10;
 	this.gameWMinusXSpawnOffset = game.width - this.xSpawnCoordOffset;
+	this.offScreenY = game.height + 400;
 };
 
 RENAME_ME.Game.prototype = {
@@ -104,16 +107,22 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting physics for asteroids
 	    this.asteroids.enableBody = true;
 	    // Creating asteroids
+	    var asteroid;
 	    for (var i = 0; i < this.numAsteroids; ++i)
 	    {
-	    	this.updateXYScaleSpeedVar();
-	        var asteroid = this.asteroids.create(this.XYScaleVelocityForAsteroid['x'], this.XYScaleVelocityForAsteroid['y'], 'asteroid');
-			asteroid.body.velocity.setTo(this.XYScaleVelocityForAsteroid['velocity'].x, this.XYScaleVelocityForAsteroid['velocity'].y);
-			asteroid.anchor.setTo(0.5, 0.5);
-	        asteroid.scale.setTo(this.XYScaleVelocityForAsteroid['scale'], this.XYScaleVelocityForAsteroid['scale']);
+	    	if (i > 5) { //hides rest of the asteroids
+	    		asteroid = this.asteroids.create(0, -1000, 'asteroid');
+	    		asteroid.kill();
+	    	}
+	    	else {
+	    		this.updateXYScaleSpeedVar();
+		        asteroid = this.asteroids.create(this.XYScaleVelocityForAsteroid['x'], this.XYScaleVelocityForAsteroid['y'], 'asteroid');
+				asteroid.body.velocity.setTo(this.XYScaleVelocityForAsteroid['velocity'].x, this.XYScaleVelocityForAsteroid['velocity'].y);
+				asteroid.anchor.setTo(0.5, 0.5);
+		        asteroid.scale.setTo(this.XYScaleVelocityForAsteroid['scale'], this.XYScaleVelocityForAsteroid['scale']);
 
-	        ++this.counterToControlAsteroidsSpawn;
-	        this.counterToControlAsteroidsSpawn > 0 && asteroid.kill(); //hides rest of the asteroids
+		        ++this.asteroidsAliveCounter;
+	    	}
 	    }
 
 		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
@@ -138,8 +147,10 @@ RENAME_ME.Game.prototype = {
 	    else {
 		    this.asteroids.forEachAlive(function(asteroid)
 		    	{
-		    		if (asteroid.y > this.game.height)
-		    			asteroid.kill(); 
+		    		if (asteroid.y > this.offScreenY) {
+		    			asteroid.kill();
+		    			--this.asteroidsAliveCounter;
+		    		}
 		    		else {
 		    			asteroid.x += asteroid.body.velocity.x;
 		    			asteroid.y += asteroid.body.velocity.y;
@@ -164,9 +175,12 @@ RENAME_ME.Game.prototype = {
 				this.fire();
 	        }
 
-	        if (this.counterToControlAsteroidsSpawn <= 0) {
-	        	this.spawnAsteroid();
-	        	++this.counterToControlAsteroidsSpawn;
+	        // preferably make constants in difficulty params
+	        if ((this.asteroidsAliveCounter < 3 && this.fragmentsAliveCounter < 8)
+	        	|| (this.fragmentsAliveCounter < 3))
+	        {
+	        	//this.spawnAsteroid();
+	        	++this.asteroidsAliveCounter; //move this to the spawn function
 	        }
 
 		    this.scoreText.text = 'Score: ' + this.score;
@@ -188,9 +202,8 @@ RENAME_ME.Game.prototype = {
 	    	this.healthBar.setPercent(this.ship.health);
 
 	    	asteroid.kill;
+	    	--this.asteroidsAliveCounter;
 	    }
-
-	    --this.counterToControlAsteroidsSpawn;
 	},
 
 	bulletCollision: function (bullet, asteroid) {
@@ -204,6 +217,9 @@ RENAME_ME.Game.prototype = {
 			var scatterDistance;
 			var fragmentVelX = asteroid.body.velocity.x;
 			var fragmentVelY = asteroid.body.velocity.y * this.smallAsteroidVelMultiplierY;
+
+			this.fragmentsAliveCounter += (numFragmentsMinusOne + 1);
+			--this.asteroidsAliveCounter;
 
 			for (var i = 0; i < numFragmentsMinusOne; ++i) { //gen 1 or 2 fragments (the final one below the loop)
 				fragment = this.asteroids.getFirstDead();
@@ -236,9 +252,8 @@ RENAME_ME.Game.prototype = {
 		}
 		else {
 			asteroid.kill();
+			--this.fragmentsAliveCounter;
 			this.score += this.difficultyLvlObject.pointsAnnihilatedFragment;
-			
-			--this.counterToControlAsteroidsSpawn;
 		}
 
 		//  And create an explosion :)		ADD LATTER
