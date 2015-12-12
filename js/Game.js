@@ -5,16 +5,16 @@ RENAME_ME.Game = function(game) {
 	this.difficultyLvlObject;
 	this.difficultyParams = {
 		normal: {
-			healthToDeduceOnFragmentCollison = 20;
+			healthToDeduceOnFragmentCollison: 20,
 			param2or3Fragments: 0.2,
-			pointsBrokenAster = 2,
-			pointsAnnihilatedFragment = 3
+			pointsBrokenAster: 2,
+			pointsAnnihilatedFragment: 3
 		},
 		hard: {
-			healthToDeduceOnFragmentCollison = 25;
+			healthToDeduceOnFragmentCollison: 25,
 			param2or3Fragments: 0.5,
-			pointsBrokenAster = 3,
-			pointsAnnihilatedFragment = 3
+			pointsBrokenAster: 3,
+			pointsAnnihilatedFragment: 3
 		}
 	};
 
@@ -191,6 +191,7 @@ RENAME_ME.Game.prototype = {
 
 	bulletCollision: function (bullet, asteroid) {
 		bullet.kill();
+		asteroid.kill();
 
 		if (asteroid.scale.x >= this.asteroidMinScale) {
 			// spawn the asteroid's debris (i.e. smaller ateroids)
@@ -198,7 +199,8 @@ RENAME_ME.Game.prototype = {
 			var fragmentScale = numFragmentsMinusOne >= 1 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
 			var fragment;
 			var scatterDistance;
-			var fragmentVelX = asteroid.x;
+			var fragmentVelX = asteroid.body.velocity.x;
+			var fragmentVelY = asteroid.body.velocity.y * this.smallAsteroidVelMultiplierY;
 
 			for (var i = 0; i < numFragmentsMinusOne; ++i) { //gen 1 or 2 fragments (the final one below the loop)
 				fragment = this.asteroids.getFirstDead();
@@ -206,15 +208,16 @@ RENAME_ME.Game.prototype = {
 
 				//1st flies to the left, 2nd (if present) down
 				if (i < 1) {
-					fragmentVelX *= (Math.random() > 0.5 ? this.smallAsteroidVelMultiplierX : (this.smallAsteroidVelMultiplierX * -1));
+					fragmentVelX *= (this.smallAsteroidVelMultiplierX * -1);
 					fragment.x = asteroid.x - scatterDistance;
 				} else {
+					fragmentVelX *= -1
 					fragment.x = asteroid.x;
 				}
 				fragment.y = asteroid.y - scatterDistance;
 				fragment.scale.setTo(fragmentScale, fragmentScale);
 				fragment.body.velocity.setTo(fragmentVelX,
-											 asteroid.y * this.smallAsteroidVelMultiplierY);
+											   fragmentVelY);
 				fragment.revive();
 			}
 
@@ -222,11 +225,15 @@ RENAME_ME.Game.prototype = {
 			scatterDistance = Math.random() * this.fragmentsScatterMaxDistance;
 			asteroid.x += scatterDistance;
 			asteroid.y -= scatterDistance;
+			asteroid.body.velocity.setTo(asteroid.body.velocity.x * this.smallAsteroidVelMultiplierX,
+											fragmentVelY);
+			asteroid.scale.setTo(fragmentScale, fragmentScale);
+
+			asteroid.revive();
 
 			this.score += this.difficultyLvlObject.pointsBrokenAster;
 		}
 		else {
-			asteroid.kill();
 			this.score += this.difficultyLvlObject.pointsAnnihilatedFragment;
 		}
 
@@ -296,5 +303,7 @@ RENAME_ME.Game.prototype = {
 	    this.XYScaleVelocityForAsteroid['scale']  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
 		this.XYScaleVelocityForAsteroid.velocity.y = Math.random() * (this.asteroidMaxSpeedY - this.asteroidMinSpeedY) + this.asteroidMinSpeedY;
 		this.XYScaleVelocityForAsteroid.velocity.x = Math.random() * (this.asteroidMaxSpeedX - this.asteroidMinSpeedX) + this.asteroidMinSpeedX;
+		if (Math.random() > 0.5)
+			this.XYScaleVelocityForAsteroid.velocity.x *= -1;
 	},
 };
