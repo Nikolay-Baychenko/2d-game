@@ -2,12 +2,17 @@
 //  	 delete/change code related to the previous game idea
 
 RENAME_ME.Game = function(game) {
+	this.difficultyLevel;
 	this.difficultyParams = {
 		normal: {
-			param2or3Fragments: 0.2
+			param2or3Fragments: 0.2,
+			pointsBrokenAster = 2,
+			pointsAnnihilatedFragment = 3
 		},
 		hard: {
-			param2or3Fragments: 0.5
+			param2or3Fragments: 0.5,
+			pointsBrokenAster = 3,
+			pointsAnnihilatedFragment = 3
 		}
 	};
 
@@ -51,6 +56,7 @@ RENAME_ME.Game = function(game) {
 
 RENAME_ME.Game.prototype = {
 	create: function() {
+		this.difficultyLevel = "normal";
 		this.score = 0;
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -187,40 +193,41 @@ RENAME_ME.Game.prototype = {
 
 		if (asteroid.scale.x >= this.asteroidMinScale) {
 			// spawn the asteroid's debris (i.e. smaller ateroids)
-			var numFragmentsMinusOne = Math.random() >= this.difficultyParams.normal.param2or3Fragments ? 1 : 2; //we reuse hitted asteroid as 1 of the fragments
+			var numFragmentsMinusOne = Math.random() >= this.difficultyParams[this.difficultyLevel].param2or3Fragments ? 1 : 2; //we reuse hitted asteroid as 1 of the fragments
+			var fragmentScale = numFragmentsMinusOne >= 1 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
 			var fragment;
 			var scatterDistance;
-			var fragmentScale;
 			var fragmentVelX = asteroid.x;
 
-			for (var i = 0; i < numFragmentsMinusOne; ++i) {
+			for (var i = 0; i < numFragmentsMinusOne; ++i) { //gen 1 or 2 fragments (the final one below the loop)
 				fragment = this.asteroids.getFirstDead();
 				scatterDistance = Math.random() * this.fragmentsScatterMaxDistance;
-				fragment.x = Math.random() > 0.5 ? asteroid.x - scatterDistance : asteroid.x + scatterDistance;
-				fragment.y = asteroid.y - scatterDistance;
-				if (asteroid.scale.x >= this.asteroidMinScale) {
-					fragmentScale = numFragmentsMinusOne >= 2 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
-					fragment.scale.setTo(fragmentScale, fragmentScale);
-				}
+
+				//1st flies to the left, 2nd (if present) down
 				if (i < 1) {
 					fragmentVelX *= (Math.random() > 0.5 ? this.smallAsteroidVelMultiplierX : (this.smallAsteroidVelMultiplierX * -1));
+					fragment.x = asteroid.x - scatterDistance;
+				} else {
+					fragment.x = asteroid.x;
 				}
+				fragment.y = asteroid.y - scatterDistance;
+				fragment.scale.setTo(fragmentScale, fragmentScale);
 				fragment.body.velocity.setTo(fragmentVelX,
 											 asteroid.y * this.smallAsteroidVelMultiplierY);
 				fragment.revive();
 			}
 
-			// make a final fragment from the asteroid
+			// convert the asteroid to a final fragment, always flies to the right
 			scatterDistance = Math.random() * this.fragmentsScatterMaxDistance;
-			asteroid.x = Math.random() > 0.5 ? asteroid.x - scatterDistance : asteroid.x + scatterDistance;
+			asteroid.x += scatterDistance;
 			asteroid.y -= scatterDistance;
 
+			this.score += this.difficultyParams[this.difficultyLevel].pointsBrokenAster;
 		}
 		else {
 			asteroid.kill();
+			this.score += this.difficultyParams[this.difficultyLevel].pointsAnnihilatedFragment;
 		}
-
-		this.score += 1;
 
 		//  And create an explosion :)		ADD LATTER
 		//var explosion = explosions.getFirstExists(false);
@@ -250,6 +257,10 @@ RENAME_ME.Game.prototype = {
 
         //the "click to restart" handler
         this.game.input.onTap.addOnce(this.restart, this);
+	},
+
+	spawnFragment: function(asteroid, fragmentType) {
+		
 	},
 
 	quitGame: function(pointer) {
