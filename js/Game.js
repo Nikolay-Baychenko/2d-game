@@ -2,14 +2,16 @@
 //  	 delete/change code related to the previous game idea
 
 RENAME_ME.Game = function(game) {
-	this.difficultyLevel;
+	this.difficultyLvlObject;
 	this.difficultyParams = {
 		normal: {
+			healthToDeduceOnFragmentCollison = 20;
 			param2or3Fragments: 0.2,
 			pointsBrokenAster = 2,
 			pointsAnnihilatedFragment = 3
 		},
 		hard: {
+			healthToDeduceOnFragmentCollison = 25;
 			param2or3Fragments: 0.5,
 			pointsBrokenAster = 3,
 			pointsAnnihilatedFragment = 3
@@ -56,7 +58,7 @@ RENAME_ME.Game = function(game) {
 
 RENAME_ME.Game.prototype = {
 	create: function() {
-		this.difficultyLevel = "normal";
+		this.difficultyLvlObject = this.difficultyParams.normal;
 		this.score = 0;
 		// Adjusting physics
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -180,8 +182,7 @@ RENAME_ME.Game.prototype = {
 	    	this.gameOver();
 	    }
 	    else {
-	    	var healthToDeduce = 25; // btw, JS hoists "vars"/"lets" to the top of a function/block
-	    	this.ship.damage(healthToDeduce);
+	    	this.ship.damage(this.difficultyLvlObject.healthToDeduceOnFragmentCollison);
 	    	this.healthBar.setPercent(this.ship.health);
 
 	    	asteroid.kill;
@@ -193,7 +194,7 @@ RENAME_ME.Game.prototype = {
 
 		if (asteroid.scale.x >= this.asteroidMinScale) {
 			// spawn the asteroid's debris (i.e. smaller ateroids)
-			var numFragmentsMinusOne = Math.random() >= this.difficultyParams[this.difficultyLevel].param2or3Fragments ? 1 : 2; //we reuse hitted asteroid as 1 of the fragments
+			var numFragmentsMinusOne = Math.random() >= this.difficultyLvlObject.param2or3Fragments ? 1 : 2; //we reuse hitted asteroid as 1 of the fragments
 			var fragmentScale = numFragmentsMinusOne >= 1 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
 			var fragment;
 			var scatterDistance;
@@ -222,11 +223,11 @@ RENAME_ME.Game.prototype = {
 			asteroid.x += scatterDistance;
 			asteroid.y -= scatterDistance;
 
-			this.score += this.difficultyParams[this.difficultyLevel].pointsBrokenAster;
+			this.score += this.difficultyLvlObject.pointsBrokenAster;
 		}
 		else {
 			asteroid.kill();
-			this.score += this.difficultyParams[this.difficultyLevel].pointsAnnihilatedFragment;
+			this.score += this.difficultyLvlObject.pointsAnnihilatedFragment;
 		}
 
 		//  And create an explosion :)		ADD LATTER
