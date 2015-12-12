@@ -178,8 +178,6 @@ RENAME_ME.Game.prototype = {
 	    if (asteroid.scale.x >= this.asteroidMinScale) {
 	    	this.ship.damage(100);
 	    	this.healthBar.setPercent(this.ship.health);
-	    	
-	    	this.gameOver();
 	    }
 	    else {
 	    	this.ship.damage(this.difficultyLvlObject.healthToDeduceOnFragmentCollison);
@@ -191,7 +189,6 @@ RENAME_ME.Game.prototype = {
 
 	bulletCollision: function (bullet, asteroid) {
 		bullet.kill();
-		asteroid.kill();
 
 		if (asteroid.scale.x >= this.asteroidMinScale) {
 			// spawn the asteroid's debris (i.e. smaller ateroids)
@@ -229,11 +226,10 @@ RENAME_ME.Game.prototype = {
 											fragmentVelY);
 			asteroid.scale.setTo(fragmentScale, fragmentScale);
 
-			asteroid.revive();
-
 			this.score += this.difficultyLvlObject.pointsBrokenAster;
 		}
 		else {
+			asteroid.kill();
 			this.score += this.difficultyLvlObject.pointsAnnihilatedFragment;
 		}
 
@@ -265,10 +261,6 @@ RENAME_ME.Game.prototype = {
 
         //the "click to restart" handler
         this.game.input.onTap.addOnce(this.restart, this);
-	},
-
-	spawnFragment: function(asteroid, fragmentType) {
-		
 	},
 
 	quitGame: function(pointer) {
