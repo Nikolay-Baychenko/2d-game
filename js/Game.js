@@ -199,7 +199,7 @@ RENAME_ME.Game.prototype = {
 				fragment.x = Math.random() > 0.5 ? asteroid.x - scatterDistance : asteroid.x + scatterDistance;
 				fragment.y = asteroid.y - scatterDistance;
 				if (asteroid.scale.x >= this.asteroidMinScale) {
-					fragmentScale = numFragmentsMinusOne == 2 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
+					fragmentScale = numFragmentsMinusOne >= 2 ? this.evenSmallerAsteroidScale : this.smallAsteroidScale;
 					fragment.scale.setTo(fragmentScale, fragmentScale);
 				}
 				if (i < 1) {
@@ -211,6 +211,9 @@ RENAME_ME.Game.prototype = {
 			}
 
 			// make a final fragment from the asteroid
+			scatterDistance = Math.random() * this.fragmentsScatterMaxDistance;
+			asteroid.x = Math.random() > 0.5 ? asteroid.x - scatterDistance : asteroid.x + scatterDistance;
+			asteroid.y -= scatterDistance;
 
 		}
 		else {
@@ -280,5 +283,6 @@ RENAME_ME.Game.prototype = {
 	    this.XYScaleVelocityForAsteroid['y'] = Math.random() * this.game.height * -2 - this.thirdTheScreen;
 	    this.XYScaleVelocityForAsteroid['scale']  = Math.random() * (this.asteroidMaxScale - this.asteroidMinScale) + this.asteroidMinScale;
 		this.XYScaleVelocityForAsteroid.velocity.y = Math.random() * (this.asteroidMaxSpeedY - this.asteroidMinSpeedY) + this.asteroidMinSpeedY;
+		this.XYScaleVelocityForAsteroid.velocity.x = Math.random() * (this.asteroidMaxSpeedX - this.asteroidMinSpeedX) + this.asteroidMinSpeedX;
 	},
 };
