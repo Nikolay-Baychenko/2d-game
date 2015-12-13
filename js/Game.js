@@ -319,7 +319,20 @@ RENAME_ME.Game.prototype = {
 	},
 
 	togglePause: function() {
-		this.game.physics.arcade.isPaused = (this.game.physics.arcade.isPaused) ? false : true;
+		if (this.game.physics.arcade.isPaused)
+		{
+    		this.stateText.visible = false;
+    		this.stateText.text.fontWeight = 'normal';
+    		this.game.physics.arcade.isPaused = false;
+		}
+		else
+		{
+			this.stateText.text = "I I";
+			this.stateText.text.fontWeight = '900';
+    		this.stateText.visible = true;
+
+    		this.game.physics.arcade.isPaused = true;
+		}
 	},
 
 	updateXYScaleVelVar: function() {
