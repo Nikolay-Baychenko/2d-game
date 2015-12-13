@@ -20,6 +20,7 @@ RENAME_ME.Game = function(game) {
 	};
 
 	this.ship;
+	this.shipY = game.world.height - 70;
 	this.shipVelocityX = 180;
 	this.healthBar;
 	this.healthBarHeight = 15;
@@ -71,7 +72,7 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting background
 	    this.game.add.sprite(0, 0, 'space');
 
-	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
+	    this.ship = this.game.add.sprite(this.game.world.centerX, this.shipY, 'ship');
 	    // Adjusting physics to the ship
 	    this.game.physics.arcade.enable(this.ship);
 	    // Setting gravity of ship to 0
@@ -299,7 +300,19 @@ RENAME_ME.Game.prototype = {
 	},
 
 	restart: function() {
+		this.score = 0;
 		this.asteroids.callAll('kill');
+		this.bigAsteroidsAliveCounter = 0;
+		this.fragmentsAliveCounter = 0;
+
+		// restart ship
+		this.ship.body.x = this.game.world.centerX;
+		this.ship.health = 100;
+		this.healthBar.setPercent(this.ship.health);
+		this.ship.revive;
+
+		// .......
+
 	},
 
 	spawnAsteroid: function() {
