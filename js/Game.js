@@ -299,7 +299,7 @@ RENAME_ME.Game.prototype = {
 	},
 
 	restart: function() {
-
+		this.asteroids.callAll('kill');
 	},
 
 	spawnAsteroid: function() {
