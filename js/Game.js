@@ -20,7 +20,6 @@ RENAME_ME.Game = function(game) {
 	};
 
 	this.ship;
-	this.shipY = game.world.height - 70;
 	this.shipVelocityX = 180;
 	this.healthBar;
 	this.healthBarHeight = 15;
@@ -72,7 +71,7 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting background
 	    this.game.add.sprite(0, 0, 'space');
 
-	    this.ship = this.game.add.sprite(this.game.world.centerX, this.shipY, 'ship');
+	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
 	    // Adjusting physics to the ship
 	    this.game.physics.arcade.enable(this.ship);
 	    // Setting gravity of ship to 0
