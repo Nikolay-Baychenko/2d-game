@@ -101,7 +101,6 @@ RENAME_ME.Game.prototype = {
 		this.bullets.setAll('anchor.x', 0.5);
 		this.bullets.setAll('anchor.y', 1);
 		this.bullets.setAll('outOfBoundsKill', true);
-		this.bullets.setAll('checkWorldBounds', true);
 
 	    // Adding asteroids group
 	    this.asteroids = this.game.add.group();
@@ -121,57 +120,62 @@ RENAME_ME.Game.prototype = {
 	    // Enable controls
 	    this.cursors = this.game.input.keyboard.createCursorKeys();
 	    this.fireBtn = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	    this.pauseBtn = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+	    this.pauseBtn.onDown.add(this.togglePause, this);
 	},
 
 	update: function() {
-		// Run collision
-	    this.game.physics.arcade.overlap(this.ship, this.asteroids, this.asteroidCollision, null, this);
-		this.game.physics.arcade.overlap(this.bullets, this.asteroids, this.bulletCollision, null, this);
+		if (!this.game.physics.arcade.isPaused)
+		{
+			// Run collision
+		    this.game.physics.arcade.overlap(this.ship, this.asteroids, this.asteroidCollision, null, this);
+			this.game.physics.arcade.overlap(this.bullets, this.asteroids, this.bulletCollision, null, this);
 
-	    if (this.ship.health <= 0) {
-	    	this.gameOver();
-	    }
-	    else {
-		    this.asteroids.forEachAlive(function(asteroid)
-		    	{
-		    		if (asteroid.y > this.offScreenY) {
-		    			asteroid.kill();
-		    			--this.bigAsteroidsAliveCounter;
-		    		}
-		    		else {
-		    			asteroid.x += asteroid.body.velocity.x;
-		    			asteroid.y += asteroid.body.velocity.y;
-		    		}
-		    	}, this);
+		    if (this.ship.health <= 0) {
+		    	this.gameOver();
+		    }
+		    else {
+			    this.asteroids.forEachAlive(function(asteroid)
+			    	{
+			    		if (asteroid.y > this.offScreenY) {
+			    			asteroid.kill();
+			    			--this.bigAsteroidsAliveCounter;
+			    		}
+			    		else {
+			    			asteroid.x += asteroid.body.velocity.x;
+			    			asteroid.y += asteroid.body.velocity.y;
+			    		}
+			    	}, this);
 
-			// Stand by after movement
-			this.ship.body.velocity.setTo(0, 0);
-			// Move left
-	    	if (this.cursors.left.isDown)
-	        {
-	            this.ship.body.velocity.x = -this.shipVelocityX;
-	        }
-			// Move right
-	        else if (this.cursors.right.isDown)
-	        {
-	            this.ship.body.velocity.x = this.shipVelocityX;
-	        }
+				// Stand by after movement
+				this.ship.body.velocity.setTo(0, 0);
+				// Move left
+		    	if (this.cursors.left.isDown)
+		        {
+		            this.ship.body.velocity.x = -this.shipVelocityX;
+		        }
+				// Move right
+		        else if (this.cursors.right.isDown)
+		        {
+		            this.ship.body.velocity.x = this.shipVelocityX;
+		        }
 
-	        //  Firing
-	        if (this.fireBtn.isDown) {
-				this.fire();
-	        }
+		        //  Firing
+		        if (this.fireBtn.isDown) {
+					this.fire();
+		        }
 
-	        // preferably make constants in difficulty params
-	        if (Math.random() <= this.difficultyLvlObject.chanceOfSpontSpawn
-	        	|| (this.bigAsteroidsAliveCounter < 3 && this.fragmentsAliveCounter < 8)
-	        	|| (this.fragmentsAliveCounter < 3 && this.bigAsteroidsAliveCounter < 6))
-	        {
-	        	this.spawnAsteroid();
-	        }
+		        // preferably make constants in difficulty params
+		        if (Math.random() <= this.difficultyLvlObject.chanceOfSpontSpawn
+		        	|| (this.bigAsteroidsAliveCounter < 3 && this.fragmentsAliveCounter < 8)
+		        	|| (this.fragmentsAliveCounter < 3 && this.bigAsteroidsAliveCounter < 6))
+		        {
+		        	this.spawnAsteroid();
+		        }
 
-		    this.scoreText.text = 'Score: ' + this.score;
-	    }
+			    this.scoreText.text = 'Score: ' + this.score;
+		    }
+		}
 	},
 
 	// The rest of the methods should be in A-Z order
@@ -210,7 +214,7 @@ RENAME_ME.Game.prototype = {
 
 			for (var i = 0; i < numFragmentsMinusOne; ++i) { //gen 1 or 2 fragments (the final one below the loop)
 				fragment = this.asteroids.getFirstDead();
-				
+
 				if (fragment == null)
 					break;
 
@@ -312,6 +316,10 @@ RENAME_ME.Game.prototype = {
 			asteroid.revive();
 			++this.bigAsteroidsAliveCounter;
 		};
+	},
+
+	togglePause: function() {
+		this.game.physics.arcade.isPaused = (this.game.physics.arcade.isPaused) ? false : true;
 	},
 
 	updateXYScaleVelVar: function() {
