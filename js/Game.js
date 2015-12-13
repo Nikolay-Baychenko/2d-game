@@ -4,14 +4,14 @@ RENAME_ME.Game = function(game) {
 	this.difficultyLvlObject; // stores 'normal' or 'hard' object
 	this.difficultyParams = {
 		normal: {
-			chanceOfSpontSpawn: 0.1,
+			chanceOfSpontSpawn: 0.005,
 			healthToDeduceOnFragmentCollison: 20,
 			param2or3Fragments: 0.2,
 			pointsBrokenAster: 2,
 			pointsAnnihilatedFragment: 3
 		},
 		hard: {
-			chanceOfSpontSpawn: 0.3,
+			chanceOfSpontSpawn: 0.009,
 			healthToDeduceOnFragmentCollison: 25,
 			param2or3Fragments: 0.5,
 			pointsBrokenAster: 3,
@@ -108,24 +108,9 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting physics for asteroids
 	    this.asteroids.enableBody = true;
 	    // Creating asteroids
-	    var asteroid;
-	    for (var i = 0; i < this.numAsteroids; ++i)
-	    {
-	    	if (i > 5) { //hides rest of the asteroids
-	    		asteroid = this.asteroids.create(0, 0, 'asteroid');
-	    		asteroid.anchor.setTo(0.5, 0.5);
-	    		asteroid.kill();
-	    	}
-	    	else {
-	    		this.updateXYScaleVelVar();
-		        asteroid = this.asteroids.create(this.XYScaleVelocityForAsteroid['x'], this.XYScaleVelocityForAsteroid['y'], 'asteroid');
-				asteroid.body.velocity.setTo(this.XYScaleVelocityForAsteroid['velocity'].x, this.XYScaleVelocityForAsteroid['velocity'].y);
-				asteroid.anchor.setTo(0.5, 0.5);
-		        asteroid.scale.setTo(this.XYScaleVelocityForAsteroid['scale'], this.XYScaleVelocityForAsteroid['scale']);
-
-		        ++this.bigAsteroidsAliveCounter;
-	    	}
-	    }
+	    this.asteroids.createMultiple(this.numAsteroids, 'asteroid');
+	    this.asteroids.setAll('anchor.x', 0.5);
+	    this.asteroids.setAll('anchor.y', 0.5);
 
 		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
 
@@ -180,7 +165,7 @@ RENAME_ME.Game.prototype = {
 	        // preferably make constants in difficulty params
 	        if (Math.random() <= this.difficultyLvlObject.chanceOfSpontSpawn
 	        	|| (this.bigAsteroidsAliveCounter < 3 && this.fragmentsAliveCounter < 8)
-	        	|| (this.fragmentsAliveCounter < 3))
+	        	|| (this.fragmentsAliveCounter < 3 && this.bigAsteroidsAliveCounter < 6))
 	        {
 	        	this.spawnAsteroid();
 	        }
@@ -225,6 +210,10 @@ RENAME_ME.Game.prototype = {
 
 			for (var i = 0; i < numFragmentsMinusOne; ++i) { //gen 1 or 2 fragments (the final one below the loop)
 				fragment = this.asteroids.getFirstDead();
+				
+				if (fragment == null)
+					break;
+
 				scatterDistance = Math.random() * this.fragmentsScatterMaxDistance;
 
 				//1st flies to the left, 2nd (if present) down
