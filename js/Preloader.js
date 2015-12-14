@@ -14,7 +14,11 @@ RENAME_ME.Preloader.prototype = {
         // loading sprite of bullet
         this.game.load.image('bullet', 'assets/imgs/bullet.png');
         // loading audio
-        this.game.load.audio('bgsound', 'assets/audio/bg.wav')
+        this.game.load.audio('backgroundSound', 'assets/audio/bg.wav');
+        this.game.load.audio('bulletSound', 'assets/audio/bullet.wav');
+        this.game.load.audio('hitAsteroidSound', 'assets/audio/bullet.wav');
+        this.game.load.audio('powerUpSound', 'assets/audio/powerup.wav');
+        this.game.load.audio('shipCrashSound', 'assets/audio/spaceshipcrash.wav');
     },
 
     create: function() {

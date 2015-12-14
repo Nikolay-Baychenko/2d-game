@@ -62,7 +62,11 @@ RENAME_ME.Game = function(game) {
 	this.offScreenY = game.height + 400;
 
 	// adding audio
-	this.bgsound;
+	this.backgroundSound;
+	this.bulletSound;
+	this.hitAsteroidSound
+	this.powerUpSound;
+	this.shipCrashSound;
 };
 
 RENAME_ME.Game.prototype = {
@@ -77,8 +81,8 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting physics to the ship
 	    this.game.physics.arcade.enable(this.ship);
 		// Adjusting audio
-		this.bgsound = this.game.add.audio('bgsound');
-		this.bgsound.play();
+		this.backgroundSound = this.game.add.audio('backgroundSound');
+		this.backgroundSound.play();
 
 		// Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
@@ -232,7 +236,7 @@ RENAME_ME.Game.prototype = {
 					fragmentVelX *= (this.smallAsteroidVelMultiplierX * -1);
 					fragment.x = asteroid.x - scatterDistance;
 				} else {
-					fragmentVelX *= -1
+					fragmentVelX *= -1;
 					fragment.x = asteroid.x;
 				}
 				fragment.y = asteroid.y - scatterDistance;
@@ -269,6 +273,9 @@ RENAME_ME.Game.prototype = {
 	fire: function() {
 		// Timing doesn't work, need to fix
 		if (this.game.time.now > this.fireReloadTime) {
+			// Adding bullet sound
+			this.bulletSound = this.game.add.audio('bulletSound');
+			this.bulletSound.play();
 			//  Grab the first bullet we can from the pool
 			var bullet = this.bullets.getFirstExists(false);
 			if (bullet) {
