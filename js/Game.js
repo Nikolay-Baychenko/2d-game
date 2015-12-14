@@ -332,10 +332,9 @@ RENAME_ME.Game.prototype = {
 		this.fragmentsAliveCounter = 0;
 
 		// restart ship
-		this.ship.body.x = this.game.world.centerX;
-		this.ship.health = 100;
+		this.ship.revive(100);
+		this.ship.x = this.game.world.centerX;
 		this.healthBar.setPercent(this.ship.health);
-		this.ship.revive;
 
 		this.stateText.visible = false;
 
