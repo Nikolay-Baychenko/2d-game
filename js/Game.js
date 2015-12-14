@@ -26,9 +26,9 @@ RENAME_ME.Game = function(game) {
 	this.healthBarWidth = 180;
 	this.fireReloadTime = 0;
 	this.asteroids;
-	this.numAsteroids = 44; // in pool (alive & killed)
+	this.asteroidsPoolSize = 44;
 	this.bullets;
-	this.numBulletsInPool = 20;
+	this.bulletsPoolSize = 20;
 
 	//this.maxAstersOnScreen = 10;
 	this.score;
@@ -108,7 +108,7 @@ RENAME_ME.Game.prototype = {
 		this.bullets = this.game.add.group();
 		this.bullets.enableBody = true;
 		this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-		this.bullets.createMultiple(this.numBulletsInPool, 'bullet');
+		this.bullets.createMultiple(this.bulletsPoolSize, 'bullet');
 		this.bullets.setAll('anchor.x', 0.5);
 		this.bullets.setAll('anchor.y', 1);
 		this.bullets.setAll('outOfBoundsKill', true);
@@ -118,7 +118,7 @@ RENAME_ME.Game.prototype = {
 	    // Adjusting physics for asteroids
 	    this.asteroids.enableBody = true;
 	    // Creating asteroids
-	    this.asteroids.createMultiple(this.numAsteroids, 'asteroid');
+	    this.asteroids.createMultiple(this.asteroidsPoolSize, 'asteroid');
 	    this.asteroids.setAll('anchor.x', 0.5);
 	    this.asteroids.setAll('anchor.y', 0.5);
 
@@ -294,7 +294,7 @@ RENAME_ME.Game.prototype = {
 
 	gameOver: function() {
 		//this.ship.kill(); ship is killed automatically than its health <= 0
-		this.stateText.text = " GAME OVER \n  Final score:\n      "+ this.score +"\n (click to restart)";
+		this.stateText.text = " GAME OVER \n  Final score:\n      "+ this.score +"\n (click to restart) \n btw P - pause";
     	this.stateText.visible = true;
 
         //the "click to restart" handler
@@ -329,6 +329,8 @@ RENAME_ME.Game.prototype = {
 		this.ship.health = 100;
 		this.healthBar.setPercent(this.ship.health);
 		this.ship.revive;
+
+		this.stateText.visible = false;
 
 		// .......
 
