@@ -193,6 +193,9 @@ RENAME_ME.Game.prototype = {
 
 
 	asteroidCollision: function(ship, asteroid) {
+		// adding sound for ship crash
+		this.shipCrashSound = this.game.add.audio('shipCrashSound');
+		this.shipCrashSound.play();
 	    // Big asteroids destroy the ship,
 	    // smaller ones drain the ship's "health"
 	    if (asteroid.scale.x >= this.asteroidMinScale) {
@@ -210,7 +213,9 @@ RENAME_ME.Game.prototype = {
 
 	bulletCollision: function (bullet, asteroid) {
 		bullet.kill();
-
+		// adding sound to bullet -> asteroid collision
+		this.hitAsteroidSound = this.game.add.audio('hitAsteroidSound');
+		this.hitAsteroidSound.play();
 		if (asteroid.scale.x >= this.asteroidMinScale) {
 			// spawn the asteroid's debris (i.e. smaller ateroids)
 			var numFragmentsMinusOne = Math.random() >= this.difficultyLvlObject.param2or3Fragments ? 1 : 2; //we reuse hitted asteroid as 1 of the fragments

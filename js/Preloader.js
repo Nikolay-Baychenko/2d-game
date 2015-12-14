@@ -16,7 +16,7 @@ RENAME_ME.Preloader.prototype = {
         // loading audio
         this.game.load.audio('backgroundSound', 'assets/audio/bg.wav');
         this.game.load.audio('bulletSound', 'assets/audio/bullet.wav');
-        this.game.load.audio('hitAsteroidSound', 'assets/audio/bullet.wav');
+        this.game.load.audio('hitAsteroidSound', 'assets/audio/hitasteroid.wav');
         this.game.load.audio('powerUpSound', 'assets/audio/powerup.wav');
         this.game.load.audio('shipCrashSound', 'assets/audio/spaceshipcrash.wav');
     },
