@@ -60,6 +60,7 @@ RENAME_ME.Game = function(game) {
 	this.xSpawnCoordOffset = game.width / 10;
 	this.gameWMinusXSpawnOffset = game.width - this.xSpawnCoordOffset;
 	this.offScreenY = game.height + 400;
+	this.radians = [0, 1.5708, 3.14159, 4.71239];
 
 	// adding audio
 	this.backgroundSound;
@@ -234,6 +235,8 @@ RENAME_ME.Game.prototype = {
 				if (fragment == null)
 					break;
 
+				fragment.rotation = this.getRandRad();
+
 				scatterDistance = Math.random() * this.fragmentsScatterMaxDistance;
 
 				//1st flies to the left, 2nd (if present) down
@@ -301,6 +304,10 @@ RENAME_ME.Game.prototype = {
         this.game.input.onTap.addOnce(this.restart, this);
 	},
 
+	getRandRad: function() {
+		return this.radians[Math.round(Math.floor(Math.random() * 3))];
+	},
+
 	quitGame: function(pointer) {
 		this.state.start('MainMenu');
 	},
@@ -341,6 +348,7 @@ RENAME_ME.Game.prototype = {
 
 		if (asteroid) {
 			this.updateXYScaleVelVar();
+			asteroid.rotation = this.getRandRad();
 			asteroid.x = this.XYScaleVelocityForAsteroid.x;
 			asteroid.y = this.XYScaleVelocityForAsteroid.y;
 			asteroid.body.velocity.setTo(this.XYScaleVelocityForAsteroid.velocity.x,
