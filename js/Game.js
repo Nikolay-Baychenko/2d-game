@@ -60,6 +60,9 @@ RENAME_ME.Game = function(game) {
 	this.xSpawnCoordOffset = game.width / 10;
 	this.gameWMinusXSpawnOffset = game.width - this.xSpawnCoordOffset;
 	this.offScreenY = game.height + 400;
+
+	// adding audio
+	this.bgsound;
 };
 
 RENAME_ME.Game.prototype = {
@@ -70,11 +73,14 @@ RENAME_ME.Game.prototype = {
 	    this.game.physics.startSystem(Phaser.Physics.ARCADE);
 	    // Adjusting background
 	    this.game.add.sprite(0, 0, 'space');
-
 	    this.ship = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 70, 'ship');
 	    // Adjusting physics to the ship
 	    this.game.physics.arcade.enable(this.ship);
-	    // Setting gravity of ship to 0
+		// Adjusting audio
+		this.bgsound = this.game.add.audio('bgsound');
+		this.bgsound.play();
+
+		// Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
 	    // Initial velocity of the ship
 	    this.ship.body.velocity.x = 0;
@@ -258,6 +264,7 @@ RENAME_ME.Game.prototype = {
 		//explosion.play('kaboom', 30, false, true);
 
 	},
+
 
 	fire: function() {
 		// Timing doesn't work, need to fix

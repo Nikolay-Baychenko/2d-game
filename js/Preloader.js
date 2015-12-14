@@ -11,8 +11,10 @@ RENAME_ME.Preloader.prototype = {
         this.game.load.image('ship', 'assets/imgs/ship.png');
         // loading sprite of asteroid
         this.game.load.image('asteroid', 'assets/imgs/asteroid.png');
-
+        // loading sprite of bullet
         this.game.load.image('bullet', 'assets/imgs/bullet.png');
+        // loading audio
+        this.game.load.audio('bgsound', 'assets/audio/bg.wav')
     },
 
     create: function() {
