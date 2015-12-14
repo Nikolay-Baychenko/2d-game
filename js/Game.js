@@ -86,6 +86,7 @@ RENAME_ME.Game.prototype = {
 	    //this.game.camera.deadzone = new Phaser.Rectangle(100, 30, this.game.width - 200, 100);
 
 		this.ship.health = 100;
+        this.ship.body.collideWorldBounds = true;
 		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
 		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
 												 , y: this.game.height - 17

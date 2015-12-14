@@ -11,6 +11,7 @@ RENAME_ME.Boot.prototype = {
         this.stage.disableVisibilityChange = true;
 
         this.game.orientated = true;
+
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         this.scale.minWidth = this.game.width / 2;
         this.scale.minHeight = this.game.height / 2;
@@ -28,6 +29,8 @@ RENAME_ME.Boot.prototype = {
             this.scale.forceOrientation(false, true);
             this.scale.setScreenSize(true);
         }
+        this.game.world.setBounds(0, 0, this.game._width, this.game._height);
+
     },
 
     preload: function () {
