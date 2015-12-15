@@ -8,14 +8,16 @@ RENAME_ME.Game = function(game) {
 			healthToDeduceOnFragmentCollison: 20,
 			param2or3Fragments: 0.2,
 			pointsBrokenAster: 2,
-			pointsAnnihilatedFragment: 3
+			pointsAnnihilatedFragment: 3,
+			timeToReload: 1000
 		},
 		hard: {
 			chanceOfSpontSpawn: 0.009,
 			healthToDeduceOnFragmentCollison: 25,
 			param2or3Fragments: 0.5,
 			pointsBrokenAster: 3,
-			pointsAnnihilatedFragment: 3
+			pointsAnnihilatedFragment: 3,
+			timeToReload: 1300
 		}
 	};
 
@@ -24,7 +26,7 @@ RENAME_ME.Game = function(game) {
 	this.healthBar;
 	this.healthBarHeight = 15;
 	this.healthBarWidth = 180;
-	this.fireReloadTime = 0;
+	this.lastReloadTime = 0;
 	this.asteroids;
 	this.asteroidsPoolSize = 44;
 	this.bullets;
@@ -83,6 +85,7 @@ RENAME_ME.Game.prototype = {
 	    this.game.physics.arcade.enable(this.ship);
 		// Adjusting audio
 		this.backgroundSound = this.game.add.audio('backgroundSound');
+		this.bulletSound = this.game.add.audio('bulletSound');
 
 		// Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
@@ -111,7 +114,6 @@ RENAME_ME.Game.prototype = {
 		this.bullets.createMultiple(this.bulletsPoolSize, 'bullet');
 		this.bullets.setAll('anchor.x', 0.5);
 		this.bullets.setAll('anchor.y', 1);
-		this.bullets.setAll('outOfBoundsKill', true);
 
 	    // Adding asteroids group
 	    this.asteroids = this.game.add.group();
@@ -162,6 +164,12 @@ RENAME_ME.Game.prototype = {
 			    			asteroid.y += asteroid.body.velocity.y;
 			    		}
 			    	}, this);
+
+			    //custom outOfBounds kill
+			    this.bullets.forEachAlive(function(bullet) {
+			    	if (bullet.y < 0)
+			    		bullet.kill();
+			    }, this);
 
 				// Stand by after movement
 				this.ship.body.velocity.setTo(0, 0);
@@ -284,9 +292,8 @@ RENAME_ME.Game.prototype = {
 
 	fire: function() {
 		// Timing doesn't work, need to fix
-		if (this.game.time.now > this.fireReloadTime) {
-			// Adding bullet sound
-			this.bulletSound = this.game.add.audio('bulletSound');
+		if (this.game.time.now > this.lastReloadTime) {
+			// Playing bullet sound
 			this.bulletSound.play();
 			//  Grab the first bullet we can from the pool
 			var bullet = this.bullets.getFirstExists(false);
@@ -294,7 +301,8 @@ RENAME_ME.Game.prototype = {
 				//  And fire it
 				bullet.reset(this.ship.x, this.ship.y - 30);
 				bullet.body.velocity.y = -400;
-				this.fireReloadTime = this.game.time.now + 400;
+				this.bulletSound = this.game.add.audio('bulletSound');
+				this.lastReloadTime = this.game.time.now + this.difficultyLvlObject.timeToReload;
 			}
 		}
 	},
