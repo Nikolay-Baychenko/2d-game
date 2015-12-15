@@ -83,7 +83,6 @@ RENAME_ME.Game.prototype = {
 	    this.game.physics.arcade.enable(this.ship);
 		// Adjusting audio
 		this.backgroundSound = this.game.add.audio('backgroundSound');
-		this.backgroundSound.play();
 
 		// Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
@@ -136,6 +135,7 @@ RENAME_ME.Game.prototype = {
 	    									"You're one click away from\nASTEROIDERS!\n\n(cntrls: <-, ->, SPACEBAR, P - pause)", 
 	    									{ font: '70px Arial', fill: '#fff' });
 	    this.stateText.anchor.setTo(0.5, 0.5);
+	    this.game.physics.arcade.isPaused = true;
 	    this.stateText.visible = true;
         this.game.input.onTap.addOnce(this.restart, this);
 	},
@@ -342,8 +342,8 @@ RENAME_ME.Game.prototype = {
 
 		this.stateText.visible = false;
 
-		// .......
-
+		this.game.physics.arcade.isPaused = false;
+		this.backgroundSound.play();
 	},
 
 	spawnAsteroid: function() {
