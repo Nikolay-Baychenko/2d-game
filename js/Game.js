@@ -1,4 +1,4 @@
-// TODO: initial click to start text, pause btn
+// TODO: tilt the ship on right & left; make main menu with a difficulty level selector (norm & hard) - spritesheet w/ btns needed
 
 RENAME_ME.Game = function(game) {
 	this.difficultyLvlObject; // stores 'normal' or 'hard' object
