@@ -96,14 +96,14 @@ RENAME_ME.Game.prototype = {
 	    //deadzone explained here http://phaser.io/examples/v2/camera/deadzone
 	    //this.game.camera.deadzone = new Phaser.Rectangle(100, 30, this.game.width - 200, 100);
 
-		this.ship.health = 100;
+		//this.ship.health = 100;
         this.ship.body.collideWorldBounds = true;
 		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
 		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
 												 , y: this.game.height - 17
 												 , height: this.healthBarHeight
 												 , width: this.healthBarWidth});
-		this.healthBar.setPercent(this.ship.health);
+		//this.healthBar.setPercent(this.ship.health);
 
 		// Adding bullets group
 		this.bullets = this.game.add.group();
@@ -125,15 +125,19 @@ RENAME_ME.Game.prototype = {
 
 		this.scoreText = this.game.add.text(10, this.game.height - 20, 'score: 0', { fontSize: '15px', fill: '#fff' });
 
-		this.stateText = this.game.add.text(this.game.world.centerX,this.game.world.centerY,' ', { font: '70px Arial', fill: '#fff' });
-	    this.stateText.anchor.setTo(0.5, 0.5);
-	    this.stateText.visible = false;
-
 	    // Enable controls
 	    this.cursors = this.game.input.keyboard.createCursorKeys();
 	    this.fireBtn = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	    this.pauseBtn = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
 	    this.pauseBtn.onDown.add(this.togglePause, this);
+
+	    // kind of main menu
+	    this.stateText = this.game.add.text(this.game.world.centerX,this.game.world.centerY,
+	    									"You're one click away from\nASTEROIDERS!\n\n(cntrls: <-, ->, SPACEBAR, P - pause)", 
+	    									{ font: '70px Arial', fill: '#fff' });
+	    this.stateText.anchor.setTo(0.5, 0.5);
+	    this.stateText.visible = true;
+        this.game.input.onTap.addOnce(this.restart, this);
 	},
 
 	update: function() {
@@ -296,8 +300,8 @@ RENAME_ME.Game.prototype = {
 	},
 
 	gameOver: function() {
-		//this.ship.kill(); ship is killed automatically than its health <= 0
-		this.stateText.text = " GAME OVER \n  Final score:\n      "+ this.score +"\n (click to restart) \n btw P - pause";
+		//this.ship.kill(); ship is killed automatically than it's damaged to <= 0
+		this.stateText.text = " GAME OVER \n  Final score:\n      "+ this.score +"\n (click to restart) \n";
     	this.stateText.visible = true;
 
         //the "click to restart" handler
