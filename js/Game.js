@@ -132,7 +132,7 @@ RENAME_ME.Game.prototype = {
 
 	    // kind of main menu
 	    this.stateText = this.game.add.text(this.game.world.centerX,this.game.world.centerY,
-	    									"You're one click away from\n    ASTEROIDERS!\n\n (cntrls:\n<-, ->, SPACEBAR, P - pause)", 
+	    									"You're one click away from\n    ASTEROIDERS!\n\n (controls:\n<-, ->, SPACEBAR, P - pause)", 
 	    									{ font: '34px Arial', fill: '#fff' });
 	    this.stateText.anchor.setTo(0.5, 0.5);
 	    this.game.physics.arcade.isPaused = true;
@@ -208,10 +208,10 @@ RENAME_ME.Game.prototype = {
 	    	this.healthBar.setPercent(this.ship.health);
 	    }
 	    else {
-	    	this.ship.damage(this.difficultyLvlObject.healthToDeduceOnFragmentCollison);
+	    	asteroid.kill();
+	    	this.ship.damage(20);
 	    	this.healthBar.setPercent(this.ship.health);
 
-	    	asteroid.kill;
 	    	--this.bigAsteroidsAliveCounter;
 	    }
 	},
