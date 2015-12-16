@@ -100,8 +100,8 @@ RENAME_ME.Game.prototype = {
 	    //deadzone explained here http://phaser.io/examples/v2/camera/deadzone
 	    //this.game.camera.deadzone = new Phaser.Rectangle(100, 30, this.game.width - 200, 100);
 
-		//this.ship.health = 100;
         this.ship.body.collideWorldBounds = true;
+        this.ship.kill();
 		// healthbar plugin - https://github.com/bmarwane/phaser.healthbar
 		this.healthBar = new HealthBar(this.game, {x: this.game.width - this.healthBarWidth / 2 - 10
 												 , y: this.game.height - 17
@@ -217,7 +217,7 @@ RENAME_ME.Game.prototype = {
 	    }
 	    else {
 	    	asteroid.kill();
-	    	this.ship.damage(20);
+	    	this.ship.damage(this.difficultyLvlObject.healthToDeduceOnFragmentCollison);
 	    	this.healthBar.setPercent(this.ship.health);
 
 	    	--this.bigAsteroidsAliveCounter;
@@ -342,14 +342,16 @@ RENAME_ME.Game.prototype = {
 		this.bigAsteroidsAliveCounter = 0;
 		this.fragmentsAliveCounter = 0;
 
+		this.game.physics.arcade.isPaused = false;
+
 		// restart ship
-		this.ship.revive(100);
+		this.ship.revive();
+		this.ship.health = 100;
 		this.ship.x = this.game.world.centerX;
 		this.healthBar.setPercent(this.ship.health);
 
 		this.stateText.visible = false;
 
-		this.game.physics.arcade.isPaused = false;
 		this.backgroundSound.play();
 	},
 
