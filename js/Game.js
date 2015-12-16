@@ -86,6 +86,8 @@ RENAME_ME.Game.prototype = {
 		// Adjusting audio
 		this.backgroundSound = this.game.add.audio('backgroundSound');
 		this.bulletSound = this.game.add.audio('bulletSound');
+		this.shipCrashSound = this.game.add.audio('shipCrashSound');
+		this.hitAsteroidSound = this.game.add.audio('hitAsteroidSound');
 
 		// Setting gravity of ship to 0
 	    this.ship.body.gravity.y = 0;
@@ -206,8 +208,6 @@ RENAME_ME.Game.prototype = {
 
 
 	asteroidCollision: function(ship, asteroid) {
-		// adding sound for ship crash
-		this.shipCrashSound = this.game.add.audio('shipCrashSound');
 		this.shipCrashSound.play();
 	    // Big asteroids destroy the ship,
 	    // smaller ones drain the ship's "health"
@@ -226,9 +226,9 @@ RENAME_ME.Game.prototype = {
 
 	bulletCollision: function (bullet, asteroid) {
 		bullet.kill();
-		// adding sound to bullet -> asteroid collision
-		this.hitAsteroidSound = this.game.add.audio('hitAsteroidSound');
+
 		this.hitAsteroidSound.play();
+
 		if (asteroid.scale.x >= this.asteroidMinScale) {
 			// spawn the asteroid's debris (i.e. smaller ateroids)
 			var numFragmentsMinusOne = Math.random() >= this.difficultyLvlObject.param2or3Fragments ? 1 : 2; //we reuse hitted asteroid as 1 of the fragments
@@ -301,7 +301,6 @@ RENAME_ME.Game.prototype = {
 				//  And fire it
 				bullet.reset(this.ship.x, this.ship.y - 30);
 				bullet.body.velocity.y = -400;
-				this.bulletSound = this.game.add.audio('bulletSound');
 				this.lastReloadTime = this.game.time.now + this.difficultyLvlObject.timeToReload;
 			}
 		}
