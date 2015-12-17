@@ -4,7 +4,7 @@ RENAME_ME.Game = function(game) {
 	this.difficultyLvlObject; // stores 'normal' or 'hard' object
 	this.difficultyParams = {
 		normal: {
-			chanceOfSpontSpawn: 0.005,
+			chanceOfSpontSpawn: 0.02,
 			healthToDeduceOnFragmentCollison: 20,
 			param2or3Fragments: 0.2,
 			pointsBrokenAster: 2,
@@ -12,7 +12,7 @@ RENAME_ME.Game = function(game) {
 			timeToReload: 1000
 		},
 		hard: {
-			chanceOfSpontSpawn: 0.009,
+			chanceOfSpontSpawn: 0.05,
 			healthToDeduceOnFragmentCollison: 25,
 			param2or3Fragments: 0.5,
 			pointsBrokenAster: 3,
@@ -193,8 +193,8 @@ RENAME_ME.Game.prototype = {
 
 		        // preferably make constants in difficulty params
 		        if (Math.random() <= this.difficultyLvlObject.chanceOfSpontSpawn
-		        	|| (this.bigAsteroidsAliveCounter < 3 && this.fragmentsAliveCounter < 8)
-		        	|| (this.fragmentsAliveCounter < 3 && this.bigAsteroidsAliveCounter < 6))
+		        	|| (this.bigAsteroidsAliveCounter < 4 && this.fragmentsAliveCounter < 6)
+		        	|| (this.fragmentsAliveCounter < 5 && this.bigAsteroidsAliveCounter < 7))
 		        {
 		        	this.spawnAsteroid();
 		        }
